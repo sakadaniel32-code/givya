@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIVYA — Pool</title>
+<meta name="robots" content="noindex, follow">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--violet:#834DFB;--vd:#6a35e0;--inkd:#3c1d9e;--turbo:#F0E100;--haiti:#18102B;--soft:#55496e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--haiti);min-height:100vh;-webkit-font-smoothing:antialiased;
+background:radial-gradient(60% 30% at 90% -5%,rgba(131,77,251,.18),transparent 60%),radial-gradient(45% 30% at -5% 100%,rgba(240,225,100,.25),transparent 60%),linear-gradient(175deg,#fbf9ff,#f1ecff 55%,#faf8ff)}
+.wrap{max-width:620px;margin:0 auto;padding:0 20px 60px}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.8px;background:linear-gradient(115deg,#8f5bff 20%,#3c1d9e 80%);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
+.logo span{color:transparent;background:linear-gradient(115deg,#f6ea33,#d9b400);-webkit-background-clip:text;background-clip:text}
+header a{font-size:13px;font-weight:700;color:var(--vd);text-decoration:none}
+.banner{border-radius:24px;padding:24px;color:#fff;position:relative;overflow:hidden;margin-top:10px;
+background:radial-gradient(70% 90% at 88% 12%,rgba(240,225,100,.35),transparent 55%),radial-gradient(120% 120% at -10% 110%,rgba(58,24,150,.9),transparent 60%),linear-gradient(125deg,#8f5bff,#6a35e0 55%,#3c1d9e);box-shadow:0 20px 44px rgba(60,29,158,.35)}
+.banner .oc{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;opacity:.85}
+.banner h1{font-size:24px;font-weight:800;margin:8px 0 4px}
+.banner .s{font-size:13px;opacity:.9}
+.track{height:12px;border-radius:99px;background:rgba(255,255,255,.25);margin:16px 0 8px;overflow:hidden}
+.track i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#f6ea33,#e6c500);border-radius:99px;transition:width .6s}
+.pr{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700}
+.pr .hot{color:var(--turbo)}
+.big{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+.big span{font-size:11px;font-weight:800;border-radius:999px;padding:6px 12px;background:rgba(255,255,255,.18)}
+.pcard{background:rgba(255,255,255,.94);border:1px solid rgba(131,77,251,.12);border-radius:22px;padding:22px;margin-top:20px;box-shadow:0 14px 32px rgba(60,29,158,.10)}
+.pcard h2{font-size:15.5px;font-weight:800;margin-bottom:14px}
+.lbl{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#8d84a8;margin:12px 0 6px}
+input,textarea{width:100%;font:inherit;font-size:14px;font-weight:600;padding:12px 15px;border-radius:14px;border:1px solid rgba(131,77,251,.18);background:#fff;outline:none}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(131,77,251,.15)}
+.btn{display:block;width:100%;text-align:center;border-radius:999px;font-weight:700;font-size:14.5px;padding:14px;margin-top:16px;border:none;cursor:pointer;background:linear-gradient(120deg,#8f5bff,#5b2fe0);color:#fff;box-shadow:0 12px 26px rgba(60,29,158,.35)}
+.btn:disabled{opacity:.55;cursor:wait}
+.giver{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.92);border:1px solid rgba(131,77,251,.08);border-radius:16px;padding:11px 13px;margin-bottom:8px;box-shadow:0 8px 18px rgba(60,29,158,.06)}
+.giver .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#a06bff,#3c1d9e);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0}
+.giver .nm{font-size:12.5px;font-weight:700}
+.giver .note{font-size:10.5px;color:var(--soft)}
+.giver .amt{margin-left:auto;font-weight:800;font-size:12.5px;color:var(--vd)}
+.wa{display:block;text-align:center;background:#25d366;color:#fff;font-weight:700;font-size:14px;border-radius:999px;padding:14px;text-decoration:none;margin-top:20px}
+.mine{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:700;color:var(--vd);text-decoration:none}
+.note{margin-top:14px;font-size:11px;color:#8d84a8;text-align:center;line-height:1.5}
+.load{margin:40px auto;text-align:center;color:var(--soft);font-size:13px}
+.done{font-size:12.5px;font-weight:800;color:#0d8a52;text-align:center;margin-top:10px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="logo" href="index.html">GIVYA<span>.</span></a><a href="app.html">Open a pool →</a></header>
+<div class="load" id="load">Loading the pool…</div>
+<div id="page" style="display:none">
+  <div class="banner">
+    <div class="oc">TOGETHER POOL</div>
+    <h1 id="bTitle">—</h1>
+    <div class="s" id="bSub">—</div>
+    <div class="track"><i id="bar"></i></div>
+    <div class="pr"><span id="pRaised">—</span><span class="hot" id="pLeft">—</span></div>
+    <div class="big"><span id="pGivers">—</span><span id="pGoal">—</span><span id="pDl" class="hide"></span></div>
+  </div>
+
+  <div class="pcard" id="pledgeCard">
+    <h2>Join the pool 💸</h2>
+    <div class="row2">
+      <div><div class="lbl">Your name</div><input id="gName" placeholder="Femi"></div>
+      <div><div class="lbl">Your part (₦)</div><input id="gAmt" type="number" placeholder="2800"></div>
+    </div>
+    <div class="lbl">A line for them (shows after the reveal)</div><input id="gMsg" placeholder="Go and conquer 🎓">
+    <button class="btn" id="goP" onclick="pledge()">Add my contribution</button>
+    <div class="done hide" id="okMsg">You're in 🔥 refresh to see your name on the board</div>
+  </div>
+
+  <div class="pcard">
+    <h2>Givers so far</h2>
+    <div id="givers"></div>
+  </div>
+
+  <a class="wa" id="waLink" target="_blank">Share this pool on WhatsApp →</a>
+  <a class="mine" href="app.html">✨ Open your own pool</a>
+  <p class="note">v1 beta: pledges are tracked here, real money movement arrives with Paystack. Settle up with each other outside for now.</p>
+</div>
+</div>
+<script>
+const SB=supabase.createClient('https://wyffeifapgjyndsickzw.supabase.co','sb_publishable_-l_aiV-1dwtGWg9wmm3vig_72yl4HgL');
+const slug=new URLSearchParams(location.search).get('p');
+const money=n=>'₦'+Number(n).toLocaleString('en-NG');
+async function run(){
+  if(!slug){document.getElementById('load').textContent='No pool found here. Open your own at app.html.';return;}
+  const {data:pl,error:e}=await SB.from('givya_pools').select('*').eq('slug',slug).maybeSingle();
+  if(e||!pl){document.getElementById('load').textContent='This pool does not exist (or the link broke). Check the link, or open your own.';return;}
+  const {data:ps}=await SB.from('givya_pledges').select('*').eq('pool_id',pl.id).order('created_at',{ascending:false});
+  document.getElementById('load').style.display='none';
+  document.getElementById('page').style.display='block';
+  document.getElementById('bTitle').textContent=pl.title;
+  document.getElementById('bSub').textContent=pl.vendor?('Gift from '+pl.vendor):'Group gifting, made easy';
+  const raised=ps.reduce((s,p)=>s+Number(p.amount),0);
+  const pct=Math.min(100,Math.round(raised/Number(pl.goal_amount)*100));
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('pRaised').textContent=money(raised)+' raised';
+  document.getElementById('pLeft').textContent=money(Math.max(0,Number(pl.goal_amount)-raised))+' to go';
+  document.getElementById('pGivers').textContent=(ps.length)+' givers';
+  document.getElementById('pGoal').textContent='Goal '+money(pl.goal_amount);
+  if(pl.deadline){const d=document.getElementById('pDl');d.classList.remove('hide');d.textContent='Closes '+pl.deadline;}
+  document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent(`💸 Help me make "${pl.title}" happen on GIVYA! Every little counts: ${location.href}`);
+  const box=document.getElementById('givers');box.innerHTML='';
+  if(!ps.length){box.innerHTML='<div style="font-size:12.5px;color:var(--soft)">Be the first to give 🙌</div>';}
+  ps.forEach(p=>{
+    const d=document.createElement('div');d.className='giver';
+    d.innerHTML=`<div class="av">${esc((p.giver_name||'?')[0].toUpperCase())}</div><div><div class="nm">${esc(p.giver_name)}</div>${p.message?`<div class="note">"${esc(p.message)}"</div>`:''}</div><div class="amt">${money(p.amount)}</div>`;
+    box.appendChild(d);
+  });
+  document.title=`${pl.title} — GIVYA Pool`;
+}
+function esc(s){return String(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+async function pledge(){
+  const b=document.getElementById('goP');b.disabled=true;
+  const name=document.getElementById('gName').value.trim();
+  const amt=parseFloat(document.getElementById('gAmt').value);
+  const msg=document.getElementById('gMsg').value.trim();
+  if(!name||!amt){alert('Add your name and an amount.');b.disabled=false;return;}
+  const {data:pl}=await SB.from('givya_pools').select('id').eq('slug',slug).maybeSingle();
+  if(!pl){b.disabled=false;return;}
+  const {error}=await SB.from('givya_pledges').insert({pool_id:pl.id,giver_name:name,amount:amt,message:msg||null});
+  if(error){alert('Could not add your pledge, try again.');b.disabled=false;return;}
+  document.getElementById('okMsg').classList.remove('hide');
+  document.getElementById('gName').value='';document.getElementById('gAmt').value='';document.getElementById('gMsg').value='';
+  run();b.disabled=false;
+}
+run();
+</script>
+</body>
+</html>

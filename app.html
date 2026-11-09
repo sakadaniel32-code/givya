@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIVYA — Create a wishlist or pool</title>
+<meta name="robots" content="noindex, follow">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--violet:#834DFB;--vd:#6a35e0;--inkd:#3c1d9e;--turbo:#F0E100;--haiti:#18102B;--soft:#55496e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--haiti);min-height:100vh;-webkit-font-smoothing:antialiased;
+background:radial-gradient(60% 30% at 90% -5%,rgba(131,77,251,.18),transparent 60%),radial-gradient(45% 30% at -5% 100%,rgba(240,225,100,.25),transparent 60%),linear-gradient(175deg,#fbf9ff,#f1ecff 55%,#faf8ff)}
+.wrap{max-width:660px;margin:0 auto;padding:0 20px 60px}
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.logo{font-size:22px;font-weight:800;letter-spacing:-.8px;background:linear-gradient(115deg,#8f5bff 20%,#3c1d9e 80%);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
+.logo span{color:transparent;background:linear-gradient(115deg,#f6ea33,#d9b400);-webkit-background-clip:text;background-clip:text}
+header a{font-size:13px;font-weight:700;color:var(--vd);text-decoration:none}
+.tabs{display:flex;gap:8px;margin:18px 0 22px}
+.tab{flex:1;text-align:center;font-size:13.5px;font-weight:700;padding:13px;border-radius:999px;background:rgba(255,255,255,.85);border:1px solid rgba(131,77,251,.15);cursor:pointer;color:var(--soft)}
+.tab.on{background:linear-gradient(120deg,#8f5bff,#5b2fe0);color:#fff;border-color:transparent;box-shadow:0 10px 22px rgba(60,29,158,.3)}
+h1{font-size:26px;font-weight:800;letter-spacing:-.8px;margin:6px 0 6px}
+.lead{font-size:13.5px;color:var(--soft);line-height:1.6;margin-bottom:24px}
+.lbl{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#8d84a8;margin:16px 0 7px}
+input,select,textarea{width:100%;font:inherit;font-size:14px;font-weight:600;padding:13px 16px;border-radius:14px;border:1px solid rgba(131,77,251,.18);background:rgba(255,255,255,.92);outline:none}
+input:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(131,77,251,.15)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.irow{display:grid;grid-template-columns:2fr 1fr 26px;gap:8px;margin-bottom:8px}
+.del{border:none;background:none;font-size:17px;color:#c8434e;cursor:pointer;font-weight:700}
+.addit{border:1.5px dashed rgba(131,77,251,.4);background:none;border-radius:12px;padding:10px;font:inherit;font-size:12.5px;font-weight:700;color:var(--vd);cursor:pointer;width:100%}
+.btn{display:block;width:100%;text-align:center;border-radius:999px;font-weight:700;font-size:15px;padding:15px;margin-top:24px;border:none;cursor:pointer;background:linear-gradient(120deg,#8f5bff,#5b2fe0);color:#fff;box-shadow:0 14px 30px rgba(60,29,158,.35)}
+.btn:disabled{opacity:.55;cursor:wait}
+.done{text-align:center;background:rgba(255,255,255,.95);border:1px solid rgba(131,77,251,.12);border-radius:26px;padding:36px 26px;box-shadow:0 20px 46px rgba(60,29,158,.12)}
+.done .em{font-size:46px}
+.done h2{font-size:22px;font-weight:800;margin:12px 0 6px}
+.done p{font-size:13.5px;color:var(--soft);line-height:1.6}
+.linkbox{display:flex;gap:8px;margin:18px 0 12px}
+.linkbox input{font-size:12px;color:var(--vd);flex:1}
+.copy{border:none;border-radius:12px;background:linear-gradient(120deg,#f6ea33,#e6c500);font:inherit;font-size:12px;font-weight:800;padding:0 18px;cursor:pointer}
+.wa{display:block;text-align:center;background:#25d366;color:#fff;font-weight:700;font-size:14px;border-radius:999px;padding:13px;text-decoration:none;margin-top:6px}
+.home{display:inline-block;margin-top:16px;font-size:12.5px;font-weight:700;color:var(--vd)}
+.note{margin-top:14px;font-size:11px;color:#8d84a8;line-height:1.5}
+.err{margin-top:12px;font-size:12.5px;color:#c8434e;font-weight:700}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="logo" href="index.html">GIVYA<span>.</span></a><a href="index.html">← Back to site</a></header>
+
+<div id="form">
+  <div class="tabs">
+    <div class="tab on" id="tabW" onclick="pick('w')">🎁 New wishlist</div>
+    <div class="tab" id="tabP" onclick="pick('p')">👥 New pool</div>
+  </div>
+
+  <div id="secW">
+    <h1>Someone's getting it right this year</h1>
+    <p class="lead">Build the wishlist, share one link, let people claim items. No duplicated gifts, no wrong sizes.</p>
+    <div class="lbl">Your name</div><input id="wOwner" placeholder="Femi">
+    <div class="row2">
+      <div><div class="lbl">Who is it for</div><input id="wPerson" placeholder="Ada"></div>
+      <div><div class="lbl">Occasion</div><select id="wOcc"><option>Birthday</option><option>Graduation</option><option>Christmas</option><option>Wedding</option><option>Baby</option><option>Just because</option></select></div>
+    </div>
+    <div class="lbl">Wishlist title</div><input id="wTitle" placeholder="Ada's birthday wishlist">
+    <div class="lbl">The gifts (name and price)</div>
+    <div id="items"><div class="irow"><input class="in" placeholder="White sneakers, size 39"><input class="ip" placeholder="₦38,500"><button class="del" onclick="delRow(this)">✕</button></div></div>
+    <button class="addit" onclick="addRow()">+ Add another gift</button>
+    <button class="btn" id="goW" onclick="makeWishlist()">Create wishlist ✨</button>
+    <div class="err" id="errW"></div>
+  </div>
+
+  <div id="secP" class="hide">
+    <h1>Big gifts, split small</h1>
+    <p class="lead">Start the pool, drop one link in the group chat. Everyone pledges their part, escrow-style tracking keeps it honest.</p>
+    <div class="lbl">Your name</div><input id="pOwner" placeholder="Deola">
+    <div class="lbl">Pool title</div><input id="pTitle" placeholder="Tolu's graduation hamper">
+    <div class="row2">
+      <div><div class="lbl">Vendor / gift</div><input id="pVendor" placeholder="Sunrise Hampers"></div>
+      <div><div class="lbl">Goal amount</div><input id="pGoal" type="number" placeholder="60000"></div>
+    </div>
+    <div class="lbl">Closes on (optional)</div><input id="pDl" type="date">
+    <button class="btn" id="goP" onclick="makePool()">Open the pool 💸</button>
+    <div class="err" id="errP"></div>
+  </div>
+  <p class="note">v1 beta: pools track pledges, real money movement arrives with Paystack. Wishlists are live and shareable now.</p>
+</div>
+
+<div id="okW" class="done hide">
+  <div class="em">🎁</div><h2>Wishlist is live</h2>
+  <p id="wSum"></p>
+  <div class="linkbox"><input id="wLink" readonly><button class="copy" onclick="cp('wLink')">Copy</button></div>
+  <a class="wa" id="wWa" target="_blank">Share on WhatsApp →</a>
+  <a class="home" href="app.html">Make another one</a> · <a class="home" href="index.html">Home</a>
+</div>
+
+<div id="okP" class="done hide">
+  <div class="em">💸</div><h2>Pool is open</h2>
+  <p id="pSum"></p>
+  <div class="linkbox"><input id="pLink" readonly><button class="copy" onclick="cp('pLink')">Copy</button></div>
+  <a class="wa" id="pWa" target="_blank">Share on WhatsApp →</a>
+  <a class="home" href="app.html">Open another pool</a> · <a class="home" href="index.html">Home</a>
+</div>
+</div>
+
+<script>
+const SB = supabase.createClient('https://wyffeifapgjyndsickzw.supabase.co','sb_publishable_-l_aiV-1dwtGWg9wmm3vig_72yl4HgL');
+const slug = () => Math.random().toString(36).slice(2,8);
+function pick(t){['w','p'].forEach(x=>{document.getElementById('tab'+x.toUpperCase()).classList.toggle('on',x===t);document.getElementById('sec'+x.toUpperCase()).classList.toggle('hide',x!==t);});}
+function addRow(){const d=document.createElement('div');d.className='irow';d.innerHTML='<input class="in" placeholder="Gift name"><input class="ip" placeholder="₦"><button class="del" onclick="delRow(this)">✕</button>';document.getElementById('items').appendChild(d);}
+function delRow(b){b.closest('.irow').remove();}
+function cp(id){const e=document.getElementById(id);e.select();navigator.clipboard.writeText(e.value);}
+const baseUrl = () => location.href.replace(/app\.html.*/,'');
+const money = n => '₦'+Number(n).toLocaleString('en-NG');
+
+async function makeWishlist(){
+  const b=document.getElementById('goW');b.disabled=true;
+  try{
+    const owner=v('wOwner'),person=v('wPerson'),title=v('wTitle')||person+"'s wishlist";
+    if(!person){throw 'Who is the wishlist for?';}
+    const items=[...document.querySelectorAll('#items .irow')].map(r=>({name:r.querySelector('.in').value.trim(),price:parseFloat(String(r.querySelector('.ip').value).replace(/[^0-9.]/g,''))||null})).filter(i=>i.name);
+    if(!items.length){throw 'Add at least one gift.';}
+    const s=slug();
+    const {data,error:e1}=await SB.from('givya_wishlists').insert({slug:s,title,person_name:person,occasion:v('wOcc'),owner_name:owner}).select().single();
+    if(e1)throw e1.message;
+    const {error:e2}=await SB.from('givya_wishlist_items').insert(items.map(i=>({wishlist_id:data.id,name:i.name,price:i.price})));
+    if(e2)throw e2.message;
+    const link=baseUrl()+'wishlist.html?w='+s;
+    document.getElementById('wSum').textContent=`${title} · ${items.length} gift${items.length>1?'s':''} ready to share.`;
+    document.getElementById('wLink').value=link;
+    document.getElementById('wWa').href='https://wa.me/?text='+encodeURIComponent(`🎁 ${title} is live on GIVYA. Claim a gift before someone else does: ${link}`);
+    document.getElementById('form').classList.add('hide');document.getElementById('okW').classList.remove('hide');
+  }catch(e){document.getElementById('errW').textContent=typeof e==='string'?e:(e.message||'Something went wrong, try again.');}
+  b.disabled=false;
+}
+async function makePool(){
+  const b=document.getElementById('goP');b.disabled=true;
+  try{
+    const owner=v('pOwner'),title=v('pTitle'),goal=parseFloat(v('pGoal'));
+    if(!title||!goal){throw 'Pool title and goal amount are needed.';}
+    const s=slug();
+    const {data,error:e1}=await SB.from('givya_pools').insert({slug:s,title,vendor:v('pVendor'),goal_amount:goal,deadline:v('pDl')||null,owner_name:owner}).select().single();
+    if(e1)throw e1.message;
+    const link=baseUrl()+'pool.html?p='+s;
+    const each=goal/6;
+    document.getElementById('pSum').textContent=`${title} · goal ${money(goal)} · about ${money(each)} each if 6 people split it.`;
+    document.getElementById('pLink').value=link;
+    document.getElementById('pWa').href='https://wa.me/?text='+encodeURIComponent(`💸 Help me make ${title} happen! Every little counts: ${link}`);
+    document.getElementById('form').classList.add('hide');document.getElementById('okP').classList.remove('hide');
+  }catch(e){document.getElementById('errP').textContent=typeof e==='string'?e:(e.message||'Something went wrong, try again.');}
+  b.disabled=false;
+}
+function v(id){return document.getElementById(id).value.trim();}
+</script>
+</body>
+</html>
