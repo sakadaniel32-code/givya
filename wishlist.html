@@ -94,14 +94,15 @@ async function loadItems(){
 async function createWl(){
   const t=document.getElementById('wlTitle').value.trim();if(!t)return GV.toast('Give the list a name first');
   const {data,error}=await sb.from('givya_wishlists').insert({owner_id:GV.user.id,title:t,occasion:document.getElementById('wlOcc').value.trim()||null}).select().single();
-  if(error)return GV.toast('Could not create, try again');
+  if(error){console.error('create wishlist failed',error);return GV.toast('Could not create: '+(error.message||'try again'));}
   closeSheet('wlSheet');await GV.refreshPoints();GV.toast('Wishlist created · +20 points');location.href='wishlist.html?id='+data.id;
 }
 async function addItem(){
+  if(!W)return GV.toast('Open your wishlist first, then add items');
   const t=document.getElementById('itTitle').value.trim();if(!t)return GV.toast('What is the gift?');
   const row={wishlist_id:W.id,title:t,price:document.getElementById('itPrice').value.replace(/[^0-9.]/g,'')||null,link:document.getElementById('itLink').value.trim()||null,image_url:document.getElementById('itImg').value.trim()||null,note:document.getElementById('itNote').value.trim()||null};
   const {error}=await sb.from('givya_wishlist_items').insert(row);
-  if(error)return GV.toast('Could not add, try again');
+  if(error){console.error('add item failed',error);return GV.toast('Could not add: '+(error.message||'try again'));}
   ['itTitle','itPrice','itLink','itImg','itNote'].forEach(id=>document.getElementById(id).value='');
   closeSheet('itemSheet');await GV.refreshPoints();GV.toast('Added · +10 points');loadItems();
 }

@@ -42,3 +42,5 @@ async function gvInitHeader(){
 }
 function gvGreeting(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
 function gvShare(text){if(navigator.share){navigator.share({text}).catch(()=>{});}else{navigator.clipboard.writeText(text);GV.toast('Link copied');}}
+
+window.addEventListener('error',function(e){try{GV.toast('Error: '+(e.message||'something failed'));}catch(_){}});window.addEventListener('unhandledrejection',function(e){try{var r=e.reason;GV.toast('Error: '+((r&&(r.message||r))||'something failed'));}catch(_){}});
