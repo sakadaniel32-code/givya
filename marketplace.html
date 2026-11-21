@@ -44,6 +44,9 @@ function render(){
   document.getElementById('body').innerHTML=list.length?list.map(i=>'<div class="item"><div class="thumb" style="background:'+i.g+'">'+i.e+'</div><div class="info"><b>'+i.n+'</b><small>'+i.v+'</small><br><small style="font-weight:800;color:#18102B">'+GV.naira(i.p)+'</small></div><span class="paychip">no responding</span></div>').join(''):'<div class="empty">Nothing matches that. Try another word.</div>';
 }
 function setCat(c){cat=c;render();}
+const MP=new URLSearchParams(location.search);
+if(MP.get('cat')&&CATS.includes(MP.get('cat')))cat=MP.get('cat');
+if(MP.get('q'))document.getElementById('q').value=MP.get('q');
 render();
 </script>
 </body></html>

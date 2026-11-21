@@ -10,31 +10,51 @@
 </head>
 <body>
 <div class="app">
-  <div class="topbar">
-    <div class="who">
+  <div class="topbar" style="justify-content:flex-end">
+    <div class="greet" style="flex:1;margin:0">
       <div class="avatar" id="hAv" onclick="location.href='me.html'" style="cursor:pointer">G</div>
-      <div class="hello"><span id="hHello">Welcome</span><b id="hName">to GIVYA 👋</b></div>
+      <div><div class="sub" id="hHello">Welcome to</div><div class="big" id="hName">GIVYA 👋</div></div>
     </div>
     <button class="iconbtn" onclick="location.href='me.html'" title="Me">👤</button>
   </div>
 
-  <div class="balcard" onclick="authOr()" style="cursor:pointer">
+  <div class="searchrow">
+    <div class="searchpill" onclick="location.href='marketplace.html'"><span>🔍</span><input id="q" placeholder="Search gifts, brands, ideas…" onkeydown="if(event.key==='Enter')location.href='marketplace.html?q='+encodeURIComponent(this.value)"></div>
+    <button class="bell" onclick="GV.toast('Notifications land here soon 🔔')">🔔</button>
+  </div>
+
+  <div class="hero" onclick="authOr()">
     <small>GIVYA Points</small>
-    <div class="balance" id="hPts">Sign in</div>
-    <div class="balsub" id="hSub">Earn points by giving. Spend them on gifts.</div>
+    <div class="heroPts" id="hPts">Sign in</div>
+    <div class="herosub" id="hSub">Earn points by giving. Spend them on gifts.</div>
+    <div class="heroStats" id="hStats" style="display:none">
+      <div><b id="sWl">0</b><span>Wishlists</span></div>
+      <div><b id="sCl">0</b><span>Gifts claimed</span></div>
+      <div><b id="sPl">0</b><span>Pools started</span></div>
+    </div>
     <div class="balrow">
       <a class="bbtn solid" href="gifting.html">Gift someone 🎁</a>
       <a class="bbtn" href="gifting.html#points">How points work</a>
     </div>
   </div>
 
-  <div class="slots">
-    <a class="slot" href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
-    <a class="slot" href="marketplace.html"><span class="ico">🛍️</span>Market</a>
-    <a class="slot" href="santa.html"><span class="ico">🎅</span>Secret Santa</a>
-    <a class="slot" href="gifting.html"><span class="ico">🤝</span>Together</a>
-    <a class="slot" href="gifting.html#surprise"><span class="ico">💌</span>Surprise</a>
+  <div class="cats">
+    <h2>Categories</h2>
+    <a class="seemore" href="marketplace.html">See More ›</a>
   </div>
+  <div class="chips">
+    <a href="marketplace.html?cat=Tech"><span class="ico">🎧</span>Tech</a>
+    <a href="marketplace.html?cat=Fashion"><span class="ico">👗</span>Fashion</a>
+    <a href="marketplace.html?cat=Self-care"><span class="ico">🧖🏾‍♀️</span>Self-care</a>
+    <a href="marketplace.html?cat=Home"><span class="ico">🕯️</span>Home</a>
+    <a href="marketplace.html?cat=Flowers"><span class="ico">💐</span>Flowers</a>
+  </div>
+
+  <a class="taskcard" href="santa.html">
+    <div class="ico">🎅</div>
+    <div><b style="font-size:14px">Give today: start a Secret Santa</b><div class="meta">5 min setup · works for any group · names drawn privately</div></div>
+    <div class="arrow">›</div>
+  </a>
 
   <div class="banner">Event banners land here — campaigns, giving drives, festive drops.</div>
 
@@ -117,21 +137,26 @@ async function authGo(){
   if(!session){GV.toast('Almost there — check your email to confirm, then sign in');authMode('in');return;}
   closeAuth();location.reload();
 }
-function authOr(){const p=GV.profile?GV.pts(GV.profile.points)+' pts':null;if(!p)openAuth();}
+function authOr(){if(!GV.profile)openAuth();}
 (async()=>{
   const u=await GV.init();
   const name=u?(GV.profile&&GV.profile.display_name?GV.profile.display_name:(u.user_metadata&&u.user_metadata.display_name)||'Friend'):null;
   if(u){
     document.getElementById('hAv').textContent=GV.initials(name);
     document.getElementById('hHello').textContent=gvGreeting()+',';
-    document.getElementById('hName').textContent=name.split(' ')[0]+' 👋';
+    document.getElementById('hName').textContent=name.split(' ')[0];
     document.getElementById('hPts').textContent=GV.pts(GV.profile?GV.profile.points||0:0);
     document.getElementById('hSub').textContent='Points you have earned by giving';
-    if(new URLSearchParams(location.search).get('auth')==='1')closeAuth();
-  }else{
-    document.getElementById('hHello').textContent='Welcome to';
-    document.getElementById('hName').textContent='GIVYA 👋';
-    if(new URLSearchParams(location.search).get('auth')==='1')openAuth();
+    document.getElementById('hStats').style.display='flex';
+    const uid=GV.user.id;
+    const [{count:wl},{count:cl},{count:pl}]=await Promise.all([
+      sb.from('givya_wishlists').select('id',{count:'exact',head:true}).eq('owner_id',uid),
+      sb.from('givya_claims').select('id',{count:'exact',head:true}).eq('claimer_id',uid),
+      sb.from('givya_pools').select('id',{count:'exact',head:true}).eq('owner_id',uid)
+    ]);
+    document.getElementById('sWl').textContent=wl||0;
+    document.getElementById('sCl').textContent=cl||0;
+    document.getElementById('sPl').textContent=pl||0;
   }
 })();
 </script>
