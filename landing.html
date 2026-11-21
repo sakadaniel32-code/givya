@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIVYA — Give the right gift</title>
+<meta name="theme-color" content="#7A3FF5">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="who">
+      <div class="avatar" id="gvAvatar">G</div>
+      <div class="hello"><span id="gvHello">Hello 👋</span><b id="gvName"></b></div>
+    </div>
+    <div class="chip"><span class="dot"></span><span id="gvPts">…</span></div>
+  </div>
+
+  <section class="balcard">
+    <small>GIVYA Points</small>
+    <div class="balance" id="balance">—</div>
+    <div class="balsub">Your kind gestures turn into points. Earn as you give. 🎁</div>
+    <div class="balrow">
+      <a class="bbtn" href="me.html">History</a>
+      <a class="bbtn" href="gifting.html#points">How it works</a>
+      <span class="bbtn solid" id="redeemBtn">Redeem</span>
+    </div>
+  </section>
+
+  <div class="slots">
+    <a class="slot" href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
+    <a class="slot" href="gifting.html"><span class="ico">🤝</span>Together</a>
+    <a class="slot" href="santa.html"><span class="ico">🎅</span>Secret Santa</a>
+    <a class="slot" href="marketplace.html"><span class="ico">🛍️</span>Market</a>
+    <a class="slot" href="gifting.html#surprise"><span class="ico">✨</span>Surprise</a>
+    <a class="slot" href="me.html"><span class="ico">👤</span>Me</a>
+  </div>
+
+  <div class="banner">Banner space reserved — events, drops and partner gifts will live here</div>
+
+  <div class="grid">
+    <a class="tile" href="wishlist.html"><span class="ico" style="background:#F1EDFF">🎁</span><h3>Wishlist</h3><p>Lists people can actually shop from, without buying the same thing twice.</p></a>
+    <a class="tile" href="marketplace.html"><span class="ico" style="background:#FFF3C9">🛍️</span><h3>Marketplace</h3><p>Curated gift picks from verified sellers.</p></a>
+    <a class="tile" href="santa.html"><span class="ico" style="background:#E8F3FF">🎅</span><h3>Secret Santa</h3><p>Draw names in secret. Everyone gets a match, nobody knows who.</p></a>
+    <a class="tile" href="gifting.html"><span class="ico" style="background:#FFEDE4">✨</span><h3>Gifting Shebang</h3><p>Together pools, surprise gifts and the whole gifting life.</p></a>
+  </div>
+</div>
+
+<nav class="tabs">
+  <a href="/" class="on"><span class="ico">🏠</span>Home</a>
+  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
+  <a href="marketplace.html"><span class="ico">🛍️</span>Market</a>
+  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
+  <a href="me.html"><span class="ico">👤</span>Me</a>
+</nav>
+
+<div class="modal" id="authModal" style="display:none">
+  <div class="sheet">
+    <div class="spread mb"><h2 id="aTitle">Welcome to GIVYA</h2><button class="iconbtn" onclick="closeAuth()">✕</button></div>
+    <div class="auth-tabs">
+      <button id="tabUp" class="on" onclick="setMode('up')">Sign up</button>
+      <button id="tabIn" onclick="setMode('in')">Sign in</button>
+    </div>
+    <div id="upFields">
+      <label>Your name</label><input id="aName" placeholder="e.g. Ada Obi">
+      <label>Phone number</label><input id="aPhone" inputmode="tel" placeholder="e.g. 0803 000 0000">
+    </div>
+    <label>Email</label><input id="aEmail" type="email" placeholder="you@email.com">
+    <label>Password</label><input id="aPass" type="password" placeholder="At least 6 characters">
+    <button class="btn mt" id="aGo" onclick="gvSubmit()">Create my account</button>
+    <p class="small mt" id="aMsg" style="display:none"></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+let mode='up';
+function setMode(m){mode=m;document.getElementById('tabUp').classList.toggle('on',m==='up');document.getElementById('tabIn').classList.toggle('on',m==='in');document.getElementById('upFields').style.display=m==='up'?'block':'none';document.getElementById('aGo').textContent=m==='up'?'Create my account':'Sign in';document.getElementById('aTitle').textContent=m==='up'?'Welcome to GIVYA':'Welcome back';}
+function openAuth(m){setMode(m||'up');document.getElementById('authModal').style.display='flex';}
+function closeAuth(){document.getElementById('authModal').style.display='none';}
+document.getElementById('redeemBtn').onclick=()=>GV.toast('Redeeming opens when payments connect — "no responding" for now');
+async function gvSubmit(){
+  const btn=document.getElementById('aGo'),msg=document.getElementById('aMsg');
+  const email=document.getElementById('aEmail').value.trim(),pass=document.getElementById('aPass').value;
+  msg.style.display='none';btn.disabled=true;
+  try{
+    if(mode==='up'){
+      const name=document.getElementById('aName').value.trim(),phone=document.getElementById('aPhone').value.trim();
+      if(!name){msg.style.display='block';msg.textContent='Tell us your name first.';btn.disabled=false;return;}
+      const {data,error}=await sb.auth.signUp({email,password:pass,options:{data:{display_name:name,phone:phone}}});
+      if(error)throw error;
+      if(data.session){location.reload();}
+      else{msg.style.display='block';msg.textContent='Almost there! Check '+email+' for a confirmation link, then sign in here.';setMode('in');}
+    }else{
+      const {error}=await sb.auth.signInWithPassword({email,password:pass});
+      if(error)throw error;
+      location.reload();
+    }
+  }catch(e){msg.style.display='block';msg.textContent=e.message||'Something went wrong, try again.';}
+  btn.disabled=false;
+}
+(async()=>{
+  const next=new URLSearchParams(location.search).get('auth');
+  const u=await gvInitHeader();
+  const bal=document.getElementById('balance');
+  if(u){bal.textContent=GV.pts(GV.profile?(GV.profile.points||0):0);}
+  else{bal.textContent='0';document.getElementById('gvHello').textContent='Welcome to GIVYA 👋';}
+  if(next==='1'&&!u)openAuth('up');
+  document.getElementById('gvAvatar').onclick=()=>{if(u)location.href='me.html';else openAuth('up');};
+  document.getElementById('gvPts').onclick=()=>{if(!u)openAuth('up');};
+  document.getElementById('gvPts').style.cursor='pointer';
+})();
+</script>
+</body></html>

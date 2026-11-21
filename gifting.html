@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gifting Shebang — GIVYA</title>
+<meta name="theme-color" content="#7A3FF5">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="pagehead" id="ph"><a class="back" href="/">←</a><h1 id="h1">Gifting Shebang</h1></div>
+  <div id="body"><div class="empty">Loading…</div></div>
+</div>
+<nav class="tabs">
+  <a href="/"><span class="ico">🏠</span>Home</a>
+  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
+  <a href="marketplace.html"><span class="ico">🛍️</span>Market</a>
+  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
+  <a href="me.html"><span class="ico">👤</span>Me</a>
+</nav>
+<div class="modal" id="pSheet" style="display:none"><div class="sheet">
+  <div class="spread mb"><h2>Start a Together pool</h2><button class="iconbtn" onclick="closeSheet()">✕</button></div>
+  <label>What are we giving?</label><input id="pTitle" placeholder="e.g. New phone for Tolu's graduation">
+  <label>Who is it for?</label><input id="pWho" placeholder="e.g. Tolu">
+  <label>Goal amount (₦, optional)</label><input id="pGoal" inputmode="decimal" placeholder="e.g. 150000">
+  <label>Deadline (optional)</label><input id="pDeadline" type="date">
+  <button class="btn mt" onclick="createPool()">Create pool</button>
+  <p class="small mt">Sharing a pool link lets anyone pledge. Money collection connects when payments go live; for now pledges are tracked here.</p>
+</div></div>
+<div class="modal" id="plSheet" style="display:none"><div class="sheet">
+  <div class="spread mb"><h2>Pledge a gift</h2><button class="iconbtn" onclick="closeSheet()">✕</button></div>
+  <label>Your name</label><input id="plName" placeholder="e.g. Chidi">
+  <label>Amount (₦)</label><input id="plAmt" inputmode="decimal" placeholder="e.g. 10000">
+  <label>Message (optional)</label><input id="plMsg" placeholder="e.g. Happy graduation! 🎓">
+  <button class="btn mt" onclick="pledge()">Add my pledge</button>
+</div></div>
+<script src="app.js"></script>
+<script>
+const params=new URLSearchParams(location.search);
+let POOL=null,PLEDGES=[],IS_OWNER=false;
+const SUGGEST=[
+ {n:'A quality pair of wireless earbuds',w:'Everyone uses them daily; hard to go wrong'},
+ {n:'Spa or self-care day package',w:'Experience gifts land well for the person who has everything'},
+ {n:'A framed print of something they love',w:'Personal without being expensive'},
+ {n:'Data + airtime top-up bundle',w:'The most Nigerian practical gift, always appreciated'},
+ {n:'A good neck massager',w:'Practical, cozy, and surprisingly memorable'},
+ {n:'Custom portrait or illustration',w:'Thoughtful, personal, and shows real effort'},
+];
+async function boot(){
+  const poolId=params.get('pool');
+  if(poolId)return poolView(poolId);
+  document.body.insertAdjacentHTML('beforeend',GV.gateHTML());
+  if(!await GV.needAuth())return;
+  await gvInitHeader();
+  const {data:pools}=await sb.from('givya_pools').select('*').eq('owner_id',GV.user.id).order('created_at',{ascending:false});
+  const box=document.getElementById('body');
+  let html='';
+  html+='<div class="card" style="display:flex;gap:12px;align-items:center;margin-bottom:14px"><div class="thumb" style="width:46px;height:46px">🤝</div><div style="flex:1"><b style="font-size:15px">Together</b><div class="small">Group gifting. Everyone throws in, one big gift.</div></div><button class="btn slim" onclick="openPSheet()">Start</button></div>';
+  if(pools&&pools.length){
+    for(const p of pools){
+      const {data:pls}=await sb.from('givya_pledges').select('amount,marked_paid').eq('pool_id',p.id);
+      const total=(pls||[]).reduce((s,x)=>s+Number(x.amount||0),0);
+      const pct=p.goal_amount?Math.min(100,Math.round(total/Number(p.goal_amount)*100)):0;
+      html+='<a class="card" style="display:block;margin-bottom:12px" href="gifting.html?pool='+p.id+'"><b style="font-size:15px">'+esc(p.title)+'</b><div class="small">'+(p.receiver_name?'for '+esc(p.receiver_name)+' · ':'')+GV.naira(total)+' pledged'+(p.goal_amount?' of '+GV.naira(p.goal_amount)+'':'')+'</div><div class="progress mt" style="margin-top:8px"><div style="width:'+pct+'%"></div></div></a>';
+    }
+  }
+  html+='<h2 style="font-size:16px;margin:14px 0 10px" id="surprise">More gifting</h2>';
+  html+='<div class="card" style="margin-bottom:12px"><div class="spread"><div><b style="font-size:15px">✨ Surprise gift</b><div class="small">Send a gift straight to someone, no list needed.</div></div></div><div style="margin-top:10px"><span class="paychip">no responding — payments not connected yet</span></div></div>';
+  html+='<div class="card" id="finder"><b style="font-size:15px">🧠 Gift finder</b><div class="small mb" style="margin-bottom:10px">Three quick questions, three ideas.</div><label>Who is it for?</label><select id="fWho"><option>Friend</option><option>Family</option><option>Partner</option><option>Colleague</option><option>Boss</option></select><label>Their vibe</label><select id="fVibe"><option>Practical</option><option>Fun</option><option>Cozy</option><option>Techy</option></select><button class="btn slim mt" onclick="findGifts()">Show me ideas</button><div id="fOut"></div></div>';
+  html+='<div class="card mt" id="points"><b style="font-size:15px">🏅 How points work</b><div class="small" style="margin-top:6px;line-height:1.7">Sign up: <b>+100</b> · Create a wishlist: <b>+20</b> · Add a gift idea: <b>+10</b> · Promise a gift for someone: <b>+50</b>.<br>Points are GIVYA\'s thank-you for being a giver. Redeeming them opens when payments connect.</div></div>';
+  box.innerHTML=html;
+}
+async function poolView(id){
+  const {data:p}=await sb.from('givya_pools').select('*,givya_profiles(display_name)').eq('id',id).maybeSingle();
+  if(!p){document.getElementById('body').innerHTML='<div class="empty">Pool not found.</div>';return;}
+  POOL=p;
+  await GV.init();
+  IS_OWNER=!!(GV.user&&GV.user.id===p.owner_id);
+  document.getElementById('ph').innerHTML='<a class="back" href="gifting.html">←</a><h1 style="font-size:18px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.title)+'</h1>'+(IS_OWNER?'<button class="iconbtn" id="shBtn">📤</button>':'');
+  if(IS_OWNER)document.getElementById('shBtn').onclick=()=>gvShare(GV.shareLink('gifting.html','pool='+p.id));
+  const {data:pls}=await sb.from('givya_pledges').select('*').eq('pool_id',id).order('created_at',{ascending:false});
+  PLEDGES=pls||[];
+  const total=PLEDGES.reduce((s,x)=>s+Number(x.amount||0),0);
+  const paid=PLEDGES.filter(x=>x.marked_paid).reduce((s,x)=>s+Number(x.amount||0),0);
+  const pct=p.goal_amount?Math.min(100,Math.round(total/Number(p.goal_amount)*100)):0;
+  let html='<div class="card mb"><div class="small">'+(p.receiver_name?'For '+esc(p.receiver_name):'Group gift')+(p.deadline?' · closes '+p.deadline:'')+'</div>';
+  html+='<div style="font-size:26px;font-weight:800;margin:8px 0 2px">'+GV.naira(total)+'</div><div class="small">'+(p.goal_amount?'pledged of '+GV.naira(p.goal_amount)+' goal':'pledged so far')+(IS_OWNER?' · '+GV.naira(paid)+' confirmed':'')+'</div>';
+  html+='<div class="progress mt" style="margin-top:10px"><div style="width:'+pct+'%"></div></div>';
+  html+='<button class="btn mt" onclick="document.getElementById(\'plSheet\').style.display=\'flex\'">Add my pledge</button>';
+  html+='<div class="small mt" style="text-align:center">Actual money collection comes with payments. Pledges are tracked here for now.</div></div>';
+  if(!PLEDGES.length)html+='<div class="empty">No pledges yet. Share the pool link!</div>';
+  else html+=PLEDGES.map(x=>'<div class="item"><div class="thumb">🤝</div><div class="info"><b>'+esc(x.giver_name||'Someone')+'</b><small>'+GV.naira(x.amount)+(x.message?' · '+esc(x.message):'')+'</small></div>'+(IS_OWNER?'<button class="btn slim ghost" onclick="togglePaid(\''+x.id+'\','+(!x.marked_paid)+')">'+(x.marked_paid?'✔ Paid':'Mark paid')+'</button>':(x.marked_paid?'<span class="badge done">Paid</span>':'<span class="badge">Pledged</span>'))+'</div>').join('');
+  document.getElementById('body').innerHTML=html;
+}
+async function createPool(){
+  const t=document.getElementById('pTitle').value.trim();if(!t)return GV.toast('What are we giving?');
+  const goal=document.getElementById('pGoal').value.replace(/[^0-9.]/g,'')||null;
+  const {data,error}=await sb.from('givya_pools').insert({owner_id:GV.user.id,title:t,receiver_name:document.getElementById('pWho').value.trim()||null,goal_amount:goal,deadline:document.getElementById('pDeadline').value||null}).select().single();
+  if(error)return GV.toast('Could not create, try again');
+  closeSheet();location.href='gifting.html?pool='+data.id;
+}
+async function pledge(){
+  const n=document.getElementById('plName').value.trim(),a=document.getElementById('plAmt').value.replace(/[^0-9.]/g,'');
+  if(!n||!a)return GV.toast('Name and amount, please');
+  const {error}=await sb.from('givya_pledges').insert({pool_id:POOL.id,giver_name:n,amount:a,message:document.getElementById('plMsg').value.trim()||null});
+  if(error)return GV.toast('Could not pledge, try again');
+  ['plName','plAmt','plMsg'].forEach(i=>document.getElementById(i).value='');
+  closeSheet();GV.toast('Pledge added 🤝');poolView(POOL.id);
+}
+async function togglePaid(id,val){await sb.from('givya_pledges').update({marked_paid:val}).eq('id',id);poolView(POOL.id);}
+function findGifts(){
+  const vibe=document.getElementById('fVibe').value;
+  const map={Practical:[0,3,4],Fun:[2,5],Cozy:[1,4,6],Techy:[0,5]};
+  const picks=(map[vibe]||[0,1,2]).map(i=>SUGGEST[i]);
+  document.getElementById('fOut').innerHTML=picks.map(s=>'<div class="suggest mt" style="margin-top:10px"><b>'+s.n+'</b><br><small>'+s.w+'</small></div>').join('');
+}
+function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function openPSheet(){document.getElementById('pSheet').style.display='flex';}
+function closeSheet(){document.getElementById('pSheet').style.display='none';document.getElementById('plSheet').style.display='none';}
+boot();
+</script>
+</body></html>

@@ -2,97 +2,114 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GIVYA — Wishlist</title>
-<meta name="robots" content="noindex, follow">
+<title>My Wishlists — GIVYA</title>
+<meta name="theme-color" content="#7A3FF5">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{--violet:#834DFB;--vd:#6a35e0;--inkd:#3c1d9e;--turbo:#F0E100;--haiti:#18102B;--soft:#55496e}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--haiti);min-height:100vh;-webkit-font-smoothing:antialiased;
-background:radial-gradient(60% 30% at 90% -5%,rgba(131,77,251,.18),transparent 60%),radial-gradient(45% 30% at -5% 100%,rgba(240,225,100,.25),transparent 60%),linear-gradient(175deg,#fbf9ff,#f1ecff 55%,#faf8ff)}
-.wrap{max-width:620px;margin:0 auto;padding:0 20px 60px}
-header{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
-.logo{font-size:22px;font-weight:800;letter-spacing:-.8px;background:linear-gradient(115deg,#8f5bff 20%,#3c1d9e 80%);-webkit-background-clip:text;background-clip:text;color:transparent;text-decoration:none}
-.logo span{color:transparent;background:linear-gradient(115deg,#f6ea33,#d9b400);-webkit-background-clip:text;background-clip:text}
-header a{font-size:13px;font-weight:700;color:var(--vd);text-decoration:none}
-.banner{border-radius:24px;padding:24px;color:#fff;position:relative;overflow:hidden;margin-top:10px;
-background:radial-gradient(70% 90% at 88% 12%,rgba(240,225,100,.35),transparent 55%),radial-gradient(120% 120% at -10% 110%,rgba(58,24,150,.9),transparent 60%),linear-gradient(125deg,#8f5bff,#6a35e0 55%,#3c1d9e);box-shadow:0 20px 44px rgba(60,29,158,.35)}
-.banner .oc{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;opacity:.85}
-.banner h1{font-size:26px;font-weight:800;margin:8px 0 4px}
-.banner .s{font-size:13px;opacity:.9}
-.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.meta span{font-size:10.5px;font-weight:800;border-radius:999px;padding:5px 11px;background:rgba(255,255,255,.18)}
-.sec{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 12px}
-.sec h2{font-size:16px;font-weight:800}
-.sec span{font-size:11.5px;font-weight:700;color:var(--vd)}
-.item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.94);border:1px solid rgba(131,77,251,.10);border-radius:18px;padding:14px 16px;margin-bottom:10px;box-shadow:0 8px 20px rgba(60,29,158,.07)}
-.item .ic{width:44px;height:44px;border-radius:12px;background:linear-gradient(140deg,#a06bff,#3c1d9e);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.item.cl .ic{background:linear-gradient(140deg,#f6ea33,#d9b400)}
-.item .nm{font-weight:700;font-size:13.5px}
-.item .pz{font-size:12px;color:var(--soft);margin-top:2px}
-.item .bys{font-size:10.5px;font-weight:800;color:#0d8a52;margin-top:2px}
-.claim{margin-left:auto;border:none;border-radius:999px;font:inherit;font-size:12px;font-weight:800;padding:10px 16px;cursor:pointer;background:linear-gradient(120deg,#8f5bff,#5b2fe0);color:#fff;box-shadow:0 8px 18px rgba(60,29,158,.3);flex-shrink:0}
-.item.cl{opacity:.75}
-.item.cl .claim{background:rgba(237,233,250,1);color:#0d8a52;box-shadow:none;cursor:default}
-.wa{display:block;text-align:center;background:#25d366;color:#fff;font-weight:700;font-size:14px;border-radius:999px;padding:14px;text-decoration:none;margin-top:20px}
-.mine{display:block;text-align:center;margin-top:12px;font-size:13px;font-weight:700;color:var(--vd);text-decoration:none}
-.note{margin-top:14px;font-size:11px;color:#8d84a8;text-align:center}
-.load{margin:40px auto;text-align:center;color:var(--soft);font-size:13px}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
-<header><a class="logo" href="index.html">GIVYA<span>.</span></a><a href="app.html">Make your own →</a></header>
-<div class="load" id="load">Loading the wishlist…</div>
-<div id="page" style="display:none">
-  <div class="banner">
-    <div class="oc" id="bOcc">BIRTHDAY</div>
-    <h1 id="bTitle">—</h1>
-    <div class="s" id="bSub">—</div>
-    <div class="meta"><span id="bBy">from —</span><span id="bCount">— items</span><span id="bLeft">— unclaimed</span></div>
-  </div>
-  <div class="sec"><h2>The gifts</h2><span id="hintTxt">tap claim, add your name, done</span></div>
-  <div id="items"></div>
-  <a class="wa" id="waLink" target="_blank">Share this wishlist on WhatsApp →</a>
-  <a class="mine" href="app.html">✨ Make your own wishlist</a>
-  <p class="note">GIVYA v1 beta · gifts are claimed in good faith, payment settles outside for now</p>
+<div class="app">
+  <div class="pagehead" id="ph"><a class="back" href="/">←</a><h1 id="h1">My wishlists</h1><span style="flex:1"></span><button class="iconbtn" onclick="openSheet('wlSheet')" id="addBtn" title="New wishlist">＋</button></div>
+  <div id="body"></div>
 </div>
-</div>
+<nav class="tabs">
+  <a href="/"><span class="ico">🏠</span>Home</a>
+  <a href="wishlist.html" class="on"><span class="ico">🎁</span>Wishlist</a>
+  <a href="marketplace.html"><span class="ico">🛍️</span>Market</a>
+  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
+  <a href="me.html"><span class="ico">👤</span>Me</a>
+</nav>
+
+<div class="modal" id="wlSheet" style="display:none"><div class="sheet">
+  <div class="spread mb"><h2>New wishlist</h2><button class="iconbtn" onclick="closeSheet('wlSheet')">✕</button></div>
+  <label>What is the list for?</label><input id="wlTitle" placeholder="e.g. My birthday, Housewarming">
+  <label>Occasion (optional)</label><input id="wlOcc" placeholder="e.g. Birthday — Feb 14">
+  <button class="btn mt" onclick="createWl()">Create wishlist</button>
+</div></div>
+
+<div class="modal" id="itemSheet" style="display:none"><div class="sheet">
+  <div class="spread mb"><h2>Add a gift idea</h2><button class="iconbtn" onclick="closeSheet('itemSheet')">✕</button></div>
+  <label>Item name</label><input id="itTitle" placeholder="e.g. Wireless earbuds">
+  <label>Price (₦, optional)</label><input id="itPrice" inputmode="decimal" placeholder="e.g. 25000">
+  <label>Link (optional)</label><input id="itLink" placeholder="Paste a link to the item">
+  <label>Image link (optional)</label><input id="itImg" placeholder="Paste an image URL">
+  <label>Note (optional)</label><input id="itNote" placeholder="e.g. Any colour is fine">
+  <button class="btn mt" onclick="addItem()">Add to wishlist <span class="badge" style="background:rgba(255,255,255,.2);color:#fff">+10 pts</span></button>
+</div></div>
+
+<script src="app.js"></script>
 <script>
-const SB=supabase.createClient('https://wyffeifapgjyndsickzw.supabase.co','sb_publishable_-l_aiV-1dwtGWg9wmm3vig_72yl4HgL');
-const slug=new URLSearchParams(location.search).get('w');
-const money=n=>n?'₦'+Number(n).toLocaleString('en-NG'):'';
-async function run(){
-  if(!slug){document.getElementById('load').textContent='No wishlist found here. Make your own at app.html.';return;}
-  const {data:wl,error:e}=await SB.from('givya_wishlists').select('*').eq('slug',slug).maybeSingle();
-  if(e||!wl){document.getElementById('load').textContent='This wishlist does not exist (or the link broke). Check the link, or start your own.';return;}
-  const {data:items}=await SB.from('givya_wishlist_items').select('*').eq('wishlist_id',wl.id).order('created_at');
-  document.getElementById('load').style.display='none';
-  document.getElementById('page').style.display='block';
-  document.getElementById('bOcc').textContent=(wl.occasion||'GIFTING').toUpperCase();
-  document.getElementById('bTitle').textContent=wl.title;
-  document.getElementById('bSub').textContent=`Gifts for ${wl.person_name}`;
-  document.getElementById('bBy').textContent='from '+(wl.owner_name||'a friend');
-  const un=items.filter(i=>!i.claimed).length;
-  document.getElementById('bCount').textContent=items.length+' items';
-  document.getElementById('bLeft').textContent=un+' unclaimed';
-  document.getElementById('waLink').href='https://wa.me/?text='+encodeURIComponent(`🎁 ${wl.title} is live on GIVYA. Claim a gift before someone else does: ${location.href}`);
-  const box=document.getElementById('items');box.innerHTML='';
-  items.forEach(it=>{
-    const d=document.createElement('div');d.className='item'+(it.claimed?' cl':'');
-    d.innerHTML=`<div class="ic">${it.claimed?'✅':'🎁'}</div><div><div class="nm">${esc(it.name)}</div><div class="pz">${money(it.price)}</div>${it.claimed?`<div class="bys">claimed by ${esc(it.claimed_by||'someone')}</div>`:''}</div><button class="claim">${it.claimed?'Claimed':'Claim this'}</button>`;
-    if(!it.claimed){d.querySelector('.claim').onclick=async()=>{
-      const who=prompt('Your name (they will see who claimed it):');if(!who)return;
-      const {error:ue}=await SB.from('givya_wishlist_items').update({claimed:true,claimed_by:who.trim()}).eq('id',it.id);
-      if(ue){alert('Could not claim it, try again.');return;}
-      run();};}
-    box.appendChild(d);
-  });
-  document.title=`${wl.title} — GIVYA Wishlist`;
+const params=new URLSearchParams(location.search);
+let W=null,ITEMS=[],CLAIMS={};
+async function boot(){
+  document.body.insertAdjacentHTML('beforeend',GV.gateHTML());
+  if(!await GV.needAuth())return;
+  await gvInitHeader();
+  const id=params.get('id');
+  if(id)return detail(id);
+  listAll();
 }
-function esc(s){return String(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
-run();
+async function listAll(){
+  document.getElementById('h1').textContent='My wishlists';
+  document.getElementById('addBtn').style.display='flex';
+  const {data:wls}=await sb.from('givya_wishlists').select('*').eq('owner_id',GV.user.id).order('created_at',{ascending:false});
+  const box=document.getElementById('body');
+  if(!wls||!wls.length){box.innerHTML='<div class="empty">No wishlist yet.<br><button class="btn slim mt" onclick="openSheet(\'wlSheet\')">Create your first wishlist</button><br><span class="small" style="display:inline-block;margin-top:8px">+20 points when you do ✨</span></div>';return;}
+  const {data:items}=await sb.from('givya_wishlist_items').select('id,wishlist_id,status').in('wishlist_id',wls.map(w=>w.id));
+  const cnt={};(items||[]).forEach(i=>{cnt[i.wishlist_id]=cnt[i.wishlist_id]||{n:0,r:0};cnt[i.wishlist_id].n++;if(i.status==='claimed')cnt[i.wishlist_id].r++;});
+  box.innerHTML=wls.map(w=>{const c=cnt[w.id]||{n:0,r:0};return '<a class="card" style="display:block;margin-bottom:12px" href="wishlist.html?id='+w.id+'"><div class="spread"><div><b style="font-size:15px">'+esc(w.title)+'</b><div class="small">'+(w.occasion?esc(w.occasion)+' · ':'')+c.n+' gift'+(c.n===1?'':'s')+(c.r?', '+c.r+' reserved':'')+'</div></div><span class="badge">Open →</span></div></a>';}).join('')+'<div class="small" style="text-align:center;margin-top:10px">Every list gets a private share link for your people.</div>';
+}
+async function detail(id){
+  document.getElementById('ph').innerHTML='<a class="back" href="wishlist.html">←</a><h1 style="font-size:18px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="h1t">…</h1><button class="iconbtn" id="shareBtn" title="Share">📤</button>';
+  const {data:w}=await sb.from('givya_wishlists').select('*').eq('id',id).eq('owner_id',GV.user.id).maybeSingle();
+  if(!w){document.getElementById('body').innerHTML='<div class="empty">Wishlist not found.</div>';return;}
+  W=w;document.getElementById('h1t').textContent=w.title;
+  document.getElementById('addBtn').style.display='flex';
+  document.getElementById('addBtn').onclick=()=>openSheet('itemSheet');
+  document.getElementById('shareBtn').onclick=()=>gvShare(GV.shareLink('wishlist-view.html','w='+w.share_token));
+  await loadItems();
+}
+async function loadItems(){
+  const {data:items}=await sb.from('givya_wishlist_items').select('*').eq('wishlist_id',W.id).order('created_at',{ascending:false});
+  ITEMS=items||[];
+  CLAIMS={};
+  if(ITEMS.length){
+    const {data:cl}=await sb.from('givya_claims').select('*').in('item_id',ITEMS.map(i=>i.id)).order('created_at',{ascending:false});
+    (cl||[]).forEach(c=>{if(!CLAIMS[c.item_id])CLAIMS[c.item_id]=c;});
+  }
+  const box=document.getElementById('body');
+  let html='<div class="small mb">'+esc(W.occasion||'Your gift list')+' · share link gives friends a clean view to reserve from</div>';
+  if(!ITEMS.length)html+='<div class="empty">Nothing on this list yet.<br><button class="btn slim mt" onclick="openSheet(\'itemSheet\')">Add a gift idea</button></div>';
+  else html+=ITEMS.map(i=>{
+    const c=CLAIMS[i.id];
+    const thumb=i.image_url?'<img src="'+esc(i.image_url)+'" onerror="this.remove()">':'🎁';
+    let act='';
+    if(c)act='<span class="badge res">Reserved'+(c.claimer_name?' by '+esc(c.claimer_name):'')+'</span><br><button class="btn slim ghost" style="margin-top:6px" onclick="release(\''+i.id+'\')">Release</button>';
+    else act='<span class="badge">Open</span>';
+    return '<div class="item"><div class="thumb">'+thumb+'</div><div class="info"><b>'+esc(i.title)+'</b><small>'+(i.price?GV.naira(i.price)+' · ':'')+esc(i.note||'')+'</small>'+(i.link?' · <a href="'+esc(i.link)+'" target="_blank" style="color:#6A2FE8;font-weight:700">open link</a>':'')+'</div><div style="text-align:right">'+act+'<br><button class="iconbtn" style="margin-top:6px" onclick="delItem(\''+i.id+'\')">🗑</button></div></div>';
+  }).join('');
+  box.innerHTML=html;
+}
+async function createWl(){
+  const t=document.getElementById('wlTitle').value.trim();if(!t)return GV.toast('Give the list a name first');
+  const {data,error}=await sb.from('givya_wishlists').insert({owner_id:GV.user.id,title:t,occasion:document.getElementById('wlOcc').value.trim()||null}).select().single();
+  if(error)return GV.toast('Could not create, try again');
+  closeSheet('wlSheet');await GV.refreshPoints();GV.toast('Wishlist created · +20 points');location.href='wishlist.html?id='+data.id;
+}
+async function addItem(){
+  const t=document.getElementById('itTitle').value.trim();if(!t)return GV.toast('What is the gift?');
+  const row={wishlist_id:W.id,title:t,price:document.getElementById('itPrice').value.replace(/[^0-9.]/g,'')||null,link:document.getElementById('itLink').value.trim()||null,image_url:document.getElementById('itImg').value.trim()||null,note:document.getElementById('itNote').value.trim()||null};
+  const {error}=await sb.from('givya_wishlist_items').insert(row);
+  if(error)return GV.toast('Could not add, try again');
+  ['itTitle','itPrice','itLink','itImg','itNote'].forEach(id=>document.getElementById(id).value='');
+  closeSheet('itemSheet');await GV.refreshPoints();GV.toast('Added · +10 points');loadItems();
+}
+async function delItem(id){if(!confirm('Remove this item?'))return;await sb.from('givya_wishlist_items').delete().eq('id',id);loadItems();GV.toast('Removed');}
+async function release(id){await sb.from('givya_claims').delete().eq('item_id',id);await sb.from('givya_wishlist_items').update({status:'open'}).eq('id',id);loadItems();GV.toast('Reservation released');}
+function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function openSheet(id){document.getElementById(id).style.display='flex';}
+function closeSheet(id){document.getElementById(id).style.display='none';}
+boot();
 </script>
-</body>
-</html>
+</body></html>

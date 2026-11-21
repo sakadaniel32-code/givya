@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketplace — GIVYA</title>
+<meta name="theme-color" content="#7A3FF5">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="pagehead"><a class="back" href="/">←</a><h1>Marketplace</h1></div>
+  <input id="q" placeholder="Search gifts…" oninput="render()" style="margin-bottom:10px">
+  <div class="slots" id="chips" style="padding-top:2px"></div>
+  <div id="body" style="margin-top:6px"></div>
+  <p class="small" style="text-align:center;margin-top:14px">Checkout opens once payments are connected. Browsing is live.</p>
+</div>
+<nav class="tabs">
+  <a href="/"><span class="ico">🏠</span>Home</a>
+  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
+  <a href="marketplace.html" class="on"><span class="ico">🛍️</span>Market</a>
+  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
+  <a href="me.html"><span class="ico">👤</span>Me</a>
+</nav>
+<script src="app.js"></script>
+<script>
+const ITEMS=[
+ {n:'Wireless earbuds, white',v:'SoundHive · verified',p:24999,e:'🎧',g:'linear-gradient(135deg,#EFEBFF,#DFF0FF)',c:'Tech'},
+ {n:'GlowNG spa + self-care kit',v:'GlowNG · verified',p:18900,e:'🧖🏾‍♀️',g:'linear-gradient(135deg,#FFEDE4,#FFD9E8)',c:'Self-care'},
+ {n:'White sneakers, size 39',v:'Kicks & Co · verified',p:38500,e:'👟',g:'linear-gradient(135deg,#EAF2FF,#F3EAFF)',c:'Fashion'},
+ {n:'Petal & Stem bouquet',v:'Petal & Stem · verified',p:9500,e:'💐',g:'linear-gradient(135deg,#FFEFEF,#EFFAE9)',c:'Flowers'},
+ {n:'Ankara pocket tee',v:'Doit · verified',p:14500,e:'👕',g:'linear-gradient(135deg,#FFF7DF,#FFE9C9)',c:'Fashion'},
+ {n:'Bluetooth speaker, mini',v:'SoundHive · verified',p:17900,e:'🔊',g:'linear-gradient(135deg,#E8F3FF,#EFEAFF)',c:'Tech'},
+ {n:'Scented candle trio',v:'Ember Home · verified',p:8900,e:'🕯️',g:'linear-gradient(135deg,#FFE9D6,#FFF2E2)',c:'Home'},
+ {n:'Aso-oke headwrap set',v:'Ile Ase · verified',p:12000,e:'🧣',g:'linear-gradient(135deg,#F3EAFF,#FFE4F1)',c:'Fashion'},
+];
+const CATS=['All','Tech','Fashion','Self-care','Home','Flowers'];
+let cat='All';
+function render(){
+  const q=document.getElementById('q').value.toLowerCase();
+  document.getElementById('chips').innerHTML=CATS.map(c=>'<a class="slot" onclick="setCat(\''+c+'\')"><span class="ico" style="'+(c===cat?'background:#834DFB;color:#fff':'')+';font-size:14px;width:auto;height:auto;padding:8px 14px;border-radius:99px;font-weight:700">'+c+'</span></a>').join('');
+  const list=ITEMS.filter(i=>(cat==='All'||i.c===cat)&&(!q||i.n.toLowerCase().includes(q)||i.v.toLowerCase().includes(q)));
+  document.getElementById('body').innerHTML=list.length?list.map(i=>'<div class="item"><div class="thumb" style="background:'+i.g+'">'+i.e+'</div><div class="info"><b>'+i.n+'</b><small>'+i.v+'</small><br><small style="font-weight:800;color:#18102B">'+GV.naira(i.p)+'</small></div><span class="paychip">no responding</span></div>').join(''):'<div class="empty">Nothing matches that. Try another word.</div>';
+}
+function setCat(c){cat=c;render();}
+render();
+</script>
+</body></html>

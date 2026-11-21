@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wishlist — GIVYA</title>
+<meta name="theme-color" content="#7A3FF5">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="pagehead"><a class="back" href="/">←</a><h1 style="font-size:18px">Gift list</h1></div>
+  <div id="body"><div class="empty">Opening the list…</div></div>
+</div>
+<div class="modal" id="claimSheet" style="display:none"><div class="sheet">
+  <div class="spread mb"><h2>Reserve this gift</h2><button class="iconbtn" onclick="closeSheet()">✕</button></div>
+  <p class="sub mb" id="claimWhat"></p>
+  <label>Your name</label><input id="cName" placeholder="So they know who to thank">
+  <label>Note (optional)</label><input id="cMsg" placeholder="e.g. It is a surprise, do not tell them 😄">
+  <button class="btn mt" onclick="claim()">I'll get this <span class="badge" style="background:rgba(255,255,255,.2);color:#fff">+50 pts</span></button>
+  <p class="small mt" style="text-align:center">The person only sees that it is reserved, not what you planned to spend.</p>
+</div></div>
+<script src="app.js"></script>
+<script>
+const token=new URLSearchParams(location.search).get('w');
+let TARGET=null,ME=null,ITMS=[];
+async function boot(){
+  const u=await GV.init();
+  if(u){await GV.loadProfile();ME={id:GV.user.id,name:(GV.profile&&GV.profile.display_name)||''};}
+  const {data:w,error}=await sb.from('givya_wishlists').select('*,givya_profiles(display_name)').eq('share_token',token).maybeSingle();
+  const box=document.getElementById('body');
+  if(!w){box.innerHTML='<div class="empty">This link does not point to a list. Ask for a fresh share link.</div>';return;}
+  TARGET=w;
+  const owner=(w.givya_profiles&&w.givya_profiles.display_name)||'someone';
+  document.querySelector('h1').textContent=(owner.split(' ')[0]||owner)+"'s list";
+  const {data:items}=await sb.from('givya_wishlist_items').select('*').eq('wishlist_id',w.id).order('created_at',{ascending:false});
+  ITMS=items||[];
+  const CLAIMS={};
+  if(ITMS.length){const {data:cl}=await sb.from('givya_claims').select('*').in('item_id',items.map(i=>i.id)).order('created_at',{ascending:false});(cl||[]).forEach(c=>{if(!CLAIMS[c.item_id])CLAIMS[c.item_id]=c;});}
+  let html='<div class="small mb">'+esc(w.occasion||'A GIVYA wishlist')+' · tap a gift to reserve it, so nobody buys the same thing twice</div>';
+  if(!items||!items.length)html+='<div class="empty">This list is empty for now.</div>';
+  else html+=items.map(i=>{
+    const c=CLAIMS[i.id];
+    const thumb=i.image_url?'<img src="'+esc(i.image_url)+'" onerror="this.remove()">':'🎁';
+    const act=c?'<span class="badge res">Reserved ✔</span>':'<button class="btn slim" onclick="openClaim(\''+i.id+'\')">I\'ll get this</button>';
+    return '<div class="item"><div class="thumb">'+thumb+'</div><div class="info"><b>'+esc(i.title)+'</b><small>'+(i.price?GV.naira(i.price)+' · ':'')+esc(i.note||'')+'</small>'+(i.link?' · <a href="'+esc(i.link)+'" target="_blank" style="color:#6A2FE8;font-weight:700">where to find it</a>':'')+'</div><div style="text-align:right">'+act+'</div></div>';
+  }).join('');
+  box.innerHTML=html;
+}
+function openClaim(id){
+  document.getElementById('claimWhat').textContent='You are reserving: '+ITEM_NAME(id);
+  if(ME&&!document.getElementById('cName').value)document.getElementById('cName').value=ME.name;
+  document.getElementById('claimSheet').dataset.item=id;
+  document.getElementById('claimSheet').style.display='flex';
+}
+function ITEM_NAME(id){const it=ITMS.find(x=>x.id===id);return it?it.title:'this gift';}
+async function claim(){
+  const id=document.getElementById('claimSheet').dataset.item;
+  const name=document.getElementById('cName').value.trim();
+  if(!name)return GV.toast('Add your name first');
+  const {error}=await sb.from('givya_claims').insert({item_id:id,claimer_id:ME?ME.id:null,claimer_name:name,message:document.getElementById('cMsg').value.trim()||null});
+  if(error)return GV.toast('Could not reserve, try again');
+  closeSheet();GV.toast(ME?'Reserved · +50 points':'Reserved! Thank you 🎁');boot();
+}
+function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function closeSheet(){document.getElementById('claimSheet').style.display='none';}
+boot();
+</script>
+</body></html>
