@@ -4,24 +4,24 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gifting Shebang — GIVYA</title>
 <meta name="theme-color" content="#7A3FF5">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
-  <div class="pagehead" id="ph"><a class="back" href="/">←</a><h1 id="h1">Gifting Shebang</h1></div>
+  <div class="pagehead" id="ph"><a class="back" href="/"><span class="ms">arrow_back</span></a><h1 id="h1">Gifting Shebang</h1></div>
   <div id="body"><div class="empty">Loading…</div></div>
 </div>
 <nav class="tabs">
-  <a href="/"><span class="ico">🏠</span>Home</a>
-  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
-  <a href="marketplace.html"><span class="ico">🛍️</span>Market</a>
-  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
-  <a href="me.html"><span class="ico">👤</span>Me</a>
+  <a href="/"><span class="ico" ms>home</span>Home</a>
+  <a href="wishlist.html"><span class="ico" ms>redeem</span>Wishlist</a>
+  <a href="marketplace.html"><span class="ico" ms>shopping_bag</span>Market</a>
+  <a href="santa.html"><span class="ico" ms>ac_unit</span>Santa</a>
+  <a href="me.html"><span class="ico" ms>person</span>Me</a>
 </nav>
 <div class="modal" id="pSheet" style="display:none"><div class="sheet">
-  <div class="spread mb"><h2>Start a Together pool</h2><button class="iconbtn" onclick="closeSheet()">✕</button></div>
+  <div class="spread mb"><h2>Start a Together pool</h2><button class="iconbtn" onclick="closeSheet()"><span class="ms">close</span></button></div>
   <label>What are we giving?</label><input id="pTitle" placeholder="e.g. New phone for Tolu's graduation">
   <label>Who is it for?</label><input id="pWho" placeholder="e.g. Tolu">
   <label>Goal amount (₦, optional)</label><input id="pGoal" inputmode="decimal" placeholder="e.g. 150000">
@@ -30,7 +30,7 @@
   <p class="small mt">Sharing a pool link lets anyone pledge. Money collection connects when payments go live; for now pledges are tracked here.</p>
 </div></div>
 <div class="modal" id="plSheet" style="display:none"><div class="sheet">
-  <div class="spread mb"><h2>Pledge a gift</h2><button class="iconbtn" onclick="closeSheet()">✕</button></div>
+  <div class="spread mb"><h2>Pledge a gift</h2><button class="iconbtn" onclick="closeSheet()"><span class="ms">close</span></button></div>
   <label>Your name</label><input id="plName" placeholder="e.g. Chidi">
   <label>Amount (₦)</label><input id="plAmt" inputmode="decimal" placeholder="e.g. 10000">
   <label>Message (optional)</label><input id="plMsg" placeholder="e.g. Happy graduation! 🎓">
@@ -67,9 +67,9 @@ async function boot(){
     }
   }
   html+='<h2 style="font-size:16px;margin:14px 0 10px" id="surprise">More gifting</h2>';
-  html+='<div class="card" style="margin-bottom:12px"><div class="spread"><div><b style="font-size:15px">✨ Surprise gift</b><div class="small">Send a gift straight to someone, no list needed.</div></div></div><div style="margin-top:10px"><span class="paychip">no responding — payments not connected yet</span></div></div>';
-  html+='<div class="card" id="finder"><b style="font-size:15px">🧠 Gift finder</b><div class="small mb" style="margin-bottom:10px">Three quick questions, three ideas.</div><label>Who is it for?</label><select id="fWho"><option>Friend</option><option>Family</option><option>Partner</option><option>Colleague</option><option>Boss</option></select><label>Their vibe</label><select id="fVibe"><option>Practical</option><option>Fun</option><option>Cozy</option><option>Techy</option></select><button class="btn slim mt" onclick="findGifts()">Show me ideas</button><div id="fOut"></div></div>';
-  html+='<div class="card mt" id="points"><b style="font-size:15px">🏅 How points work</b><div class="small" style="margin-top:6px;line-height:1.7">Sign up: <b>+100</b> · Create a wishlist: <b>+20</b> · Add a gift idea: <b>+10</b> · Promise a gift for someone: <b>+50</b>.<br>Points are GIVYA\'s thank-you for being a giver. Redeeming them opens when payments connect.</div></div>';
+  html+='<div class="card" style="margin-bottom:12px"><div class="spread"><div><b style="font-size:15px"><span class="ms">auto_awesome</span> Surprise gift</b><div class="small">Send a gift straight to someone, no list needed.</div></div></div><div style="margin-top:10px"><span class="paychip">no responding — payments not connected yet</span></div></div>';
+  html+='<div class="card" id="finder"><b style="font-size:15px"><span class="ms">psychology</span> Gift finder</b><div class="small mb" style="margin-bottom:10px">Three quick questions, three ideas.</div><label>Who is it for?</label><select id="fWho"><option>Friend</option><option>Family</option><option>Partner</option><option>Colleague</option><option>Boss</option></select><label>Their vibe</label><select id="fVibe"><option>Practical</option><option>Fun</option><option>Cozy</option><option>Techy</option></select><button class="btn slim mt" onclick="findGifts()">Show me ideas</button><div id="fOut"></div></div>';
+  html+='<div class="card mt" id="points"><b style="font-size:15px"><span class="ms">workspace_premium</span> How points work</b><div class="small" style="margin-top:6px;line-height:1.7">Sign up: <b>+100</b> · Create a wishlist: <b>+20</b> · Add a gift idea: <b>+10</b> · Promise a gift for someone: <b>+50</b>.<br>Points are GIVYA\'s thank-you for being a giver. Redeeming them opens when payments connect.</div></div>';
   box.innerHTML=html;
 }
 async function poolView(id){
@@ -78,7 +78,7 @@ async function poolView(id){
   POOL=p;
   await GV.init();
   IS_OWNER=!!(GV.user&&GV.user.id===p.owner_id);
-  document.getElementById('ph').innerHTML='<a class="back" href="gifting.html">←</a><h1 style="font-size:18px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.title)+'</h1>'+(IS_OWNER?'<button class="iconbtn" id="shBtn">📤</button>':'');
+  document.getElementById('ph').innerHTML='<a class="back" href="gifting.html"><span class="ms">arrow_back</span></a><h1 style="font-size:18px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.title)+'</h1>'+(IS_OWNER?'<button class="iconbtn" id="shBtn"><span class="ms">outbox</span></button>':'');
   if(IS_OWNER)document.getElementById('shBtn').onclick=()=>gvShare(GV.shareLink('gifting.html','pool='+p.id));
   const {data:pls}=await sb.from('givya_pledges').select('*').eq('pool_id',id).order('created_at',{ascending:false});
   PLEDGES=pls||[];

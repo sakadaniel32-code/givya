@@ -4,18 +4,18 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Me — GIVYA</title>
 <meta name="theme-color" content="#7A3FF5">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
-  <div class="pagehead"><a class="back" href="/">←</a><h1>Me</h1></div>
+  <div class="pagehead"><a class="back" href="/"><span class="ms">arrow_back</span></a><h1>Me</h1></div>
   <div id="gate"></div>
   <div class="card" style="display:flex;align-items:center;gap:12px">
     <div class="avatar" id="pAv" style="width:52px;height:52px;font-size:16px">G</div>
     <div style="flex:1"><b id="pName" style="font-size:16px">…</b><div class="small" id="pSub"></div></div>
-    <button class="iconbtn" onclick="editName()">✏️</button>
+    <button class="iconbtn" onclick="editName()"><span class="ms">edit</span></button>
   </div>
   <div class="balcard mt mb">
     <small>GIVYA Points</small>
@@ -27,11 +27,11 @@
   <button class="btn ghost mt" onclick="gvSignOut()">Sign out</button>
 </div>
 <nav class="tabs">
-  <a href="/"><span class="ico">🏠</span>Home</a>
-  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
-  <a href="marketplace.html"><span class="ico">🛍️</span>Market</a>
-  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
-  <a href="me.html" class="on"><span class="ico">👤</span>Me</a>
+  <a href="/"><span class="ico" ms>home</span>Home</a>
+  <a href="wishlist.html"><span class="ico" ms>redeem</span>Wishlist</a>
+  <a href="marketplace.html"><span class="ico" ms>shopping_bag</span>Market</a>
+  <a href="santa.html"><span class="ico" ms>ac_unit</span>Santa</a>
+  <a href="me.html" class="on"><span class="ico" ms>person</span>Me</a>
 </nav>
 <script src="app.js"></script>
 <script>
@@ -53,7 +53,7 @@ async function editName(){
   const {data:led}=await sb.from('givya_points_ledger').select('*').eq('user_id',GV.user.id).order('created_at',{ascending:false}).limit(30);
   const box=document.getElementById('ledger');
   if(!led||!led.length){box.innerHTML='<div class="empty">No points yet. Create a wishlist or promise a gift to start earning.</div>';return;}
-  box.innerHTML=led.map(e=>'<div class="item"><div class="thumb">'+(e.delta>0?'✨':'—')+'</div><div class="info"><b>'+e.reason+'</b><small>'+new Date(e.created_at).toLocaleDateString('en-NG',{day:'numeric',month:'short'})+'</small></div><span class="badge '+(e.delta>0?'done':'')+'">'+(e.delta>0?'+':'')+e.delta+' pts</span></div>').join('');
+  box.innerHTML=led.map(e=>'<div class="item"><div class="thumb">'+(e.delta>0?'<span class=\"ms\">auto_awesome</span>':'—')+'</div><div class="info"><b>'+e.reason+'</b><small>'+new Date(e.created_at).toLocaleDateString('en-NG',{day:'numeric',month:'short'})+'</small></div><span class="badge '+(e.delta>0?'done':'')+'">'+(e.delta>0?'+':'')+e.delta+' pts</span></div>').join('');
 })();
 </script>
 </body></html>

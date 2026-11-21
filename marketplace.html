@@ -4,24 +4,24 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Marketplace — GIVYA</title>
 <meta name="theme-color" content="#7A3FF5">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
-  <div class="pagehead"><a class="back" href="/">←</a><h1>Marketplace</h1></div>
+  <div class="pagehead"><a class="back" href="/"><span class="ms">arrow_back</span></a><h1>Marketplace</h1></div>
   <input id="q" placeholder="Search gifts…" oninput="render()" style="margin-bottom:10px">
   <div class="slots" id="chips" style="padding-top:2px"></div>
   <div id="body" style="margin-top:6px"></div>
   <p class="small" style="text-align:center;margin-top:14px">Checkout opens once payments are connected. Browsing is live.</p>
 </div>
 <nav class="tabs">
-  <a href="/"><span class="ico">🏠</span>Home</a>
-  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
-  <a href="marketplace.html" class="on"><span class="ico">🛍️</span>Market</a>
-  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
-  <a href="me.html"><span class="ico">👤</span>Me</a>
+  <a href="/"><span class="ico" ms>home</span>Home</a>
+  <a href="wishlist.html"><span class="ico" ms>redeem</span>Wishlist</a>
+  <a href="marketplace.html" class="on"><span class="ico" ms>shopping_bag</span>Market</a>
+  <a href="santa.html"><span class="ico" ms>ac_unit</span>Santa</a>
+  <a href="me.html"><span class="ico" ms>person</span>Me</a>
 </nav>
 <script src="app.js"></script>
 <script>

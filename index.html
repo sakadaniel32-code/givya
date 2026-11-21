@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GIVYA — Give, get, and make wishes come true</title>
 <meta name="theme-color" content="#7A3FF5">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -13,14 +13,14 @@
   <div class="topbar" style="justify-content:flex-end">
     <div class="greet" style="flex:1;margin:0">
       <div class="avatar" id="hAv" onclick="location.href='me.html'" style="cursor:pointer">G</div>
-      <div><div class="sub" id="hHello">Welcome to</div><div class="big" id="hName">GIVYA 👋</div></div>
+      <div><div class="sub" id="hHello">Welcome to</div><div class="big" id="hName">GIVYA <span class="ms">waving_hand</span></div></div>
     </div>
-    <button class="iconbtn" onclick="location.href='me.html'" title="Me">👤</button>
+    <button class="iconbtn" onclick="location.href='me.html'" title="Me"><span class="ms">person</span></button>
   </div>
 
   <div class="searchrow">
-    <div class="searchpill" onclick="location.href='marketplace.html'"><span>🔍</span><input id="q" placeholder="Search gifts, brands, ideas…" onkeydown="if(event.key==='Enter')location.href='marketplace.html?q='+encodeURIComponent(this.value)"></div>
-    <button class="bell" onclick="GV.toast('Notifications land here soon 🔔')">🔔</button>
+    <div class="searchpill" onclick="location.href='marketplace.html'"><span class="ms" style="font-size:18px;color:#9AA0B5">search</span><input id="q" placeholder="Search gifts, brands, ideas…" onkeydown="if(event.key==='Enter')location.href='marketplace.html?q='+encodeURIComponent(this.value)"></div>
+    <button class="bell" onclick="GV.toast('Notifications land here soon 🔔')"><span class="ms" style="font-size:20px;color:#6A2FE8">notifications</span></button>
   </div>
 
   <div class="hero" onclick="authOr()">
@@ -43,15 +43,15 @@
     <a class="seemore" href="marketplace.html">See More ›</a>
   </div>
   <div class="chips">
-    <a href="marketplace.html?cat=Tech"><span class="ico">🎧</span>Tech</a>
-    <a href="marketplace.html?cat=Fashion"><span class="ico">👗</span>Fashion</a>
+    <a href="marketplace.html?cat=Tech"><span class="ico"> ms">devices</span>Tech</a>
+    <a href="marketplace.html?cat=Fashion"><span class="ico"> ms">checkroom</span>Fashion</a>
     <a href="marketplace.html?cat=Self-care"><span class="ico">🧖🏾‍♀️</span>Self-care</a>
-    <a href="marketplace.html?cat=Home"><span class="ico">🕯️</span>Home</a>
-    <a href="marketplace.html?cat=Flowers"><span class="ico">💐</span>Flowers</a>
+    <a href="marketplace.html?cat=Home"><span class="ico"> ms">chair</span>Home</a>
+    <a href="marketplace.html?cat=Flowers"><span class="ico"> ms">local_florist</span>Flowers</a>
   </div>
 
   <a class="taskcard" href="santa.html">
-    <div class="ico">🎅</div>
+    <div class="ico" ms>ac_unit</div>
     <div><b style="font-size:14px">Give today: start a Secret Santa</b><div class="meta">5 min setup · works for any group · names drawn privately</div></div>
     <div class="arrow">›</div>
   </a>
@@ -60,22 +60,22 @@
 
   <div class="grid">
     <a class="tile" href="wishlist.html">
-      <div class="ico" style="background:#F1EDFF">🎁</div>
+      <div class="ico" ms style="background:#F1EDFF">redeem</div>
       <h3>Wishlist</h3>
       <p>List what you actually want. Share your link. People reserve it — no double gifts, no awkward returns.</p>
     </a>
     <a class="tile" href="marketplace.html">
-      <div class="ico" style="background:#FFF3E9">🛍️</div>
+      <div class="ico" ms style="background:#FFF3E9">shopping_bag</div>
       <h3>Marketplace</h3>
       <p>Curated gifts you can redeem with points or cash. Pick, send, done.</p>
     </a>
     <a class="tile" href="santa.html">
-      <div class="ico" style="background:#FFEAF0">🎅</div>
+      <div class="ico" ms style="background:#FFEAF0">ac_unit</div>
       <h3>Secret Santa</h3>
       <p>Start a group, add your people, draw names. Everyone gets a secret match and a budget hint.</p>
     </a>
     <a class="tile" href="gifting.html">
-      <div class="ico" style="background:#E9F7F1">🤝</div>
+      <div class="ico" ms style="background:#E9F7F1">volunteer_activism</div>
       <h3>Gifting shebang</h3>
       <p>Group gifts (Together), the Gift finder, Surprise gifting, and everything points can do.</p>
     </a>
@@ -83,15 +83,15 @@
 </div>
 
 <nav class="tabs">
-  <a href="/" class="on"><span class="ico">🏠</span>Home</a>
-  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
-  <a href="marketplace.html"><span class="ico">🛍️</span>Market</a>
-  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
-  <a href="me.html"><span class="ico">👤</span>Me</a>
+  <a href="/" class="on"><span class="ico" ms>home</span>Home</a>
+  <a href="wishlist.html"><span class="ico" ms>redeem</span>Wishlist</a>
+  <a href="marketplace.html"><span class="ico" ms>shopping_bag</span>Market</a>
+  <a href="santa.html"><span class="ico" ms>ac_unit</span>Santa</a>
+  <a href="me.html"><span class="ico" ms>person</span>Me</a>
 </nav>
 
 <div class="modal" id="authSheet" style="display:none"><div class="sheet">
-  <div class="spread mb"><h2 id="authTitle">Join GIVYA</h2><button class="iconbtn" onclick="closeAuth()">✕</button></div>
+  <div class="spread mb"><h2 id="authTitle">Join GIVYA</h2><button class="iconbtn" onclick="closeAuth()"><span class="ms">close</span></button></div>
   <div class="auth-tabs">
     <button id="tabUp" class="on" onclick="authMode('up')">Sign up</button>
     <button id="tabIn" onclick="authMode('in')">Sign in</button>

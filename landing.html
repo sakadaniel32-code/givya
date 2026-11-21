@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GIVYA — Give the right gift</title>
 <meta name="theme-color" content="#7A3FF5">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -30,35 +30,35 @@
   </section>
 
   <div class="slots">
-    <a class="slot" href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
-    <a class="slot" href="gifting.html"><span class="ico">🤝</span>Together</a>
-    <a class="slot" href="santa.html"><span class="ico">🎅</span>Secret Santa</a>
-    <a class="slot" href="marketplace.html"><span class="ico">🛍️</span>Market</a>
-    <a class="slot" href="gifting.html#surprise"><span class="ico">✨</span>Surprise</a>
-    <a class="slot" href="me.html"><span class="ico">👤</span>Me</a>
+    <a class="slot" href="wishlist.html"><span class="ico" ms>redeem</span>Wishlist</a>
+    <a class="slot" href="gifting.html"><span class="ico" ms>volunteer_activism</span>Together</a>
+    <a class="slot" href="santa.html"><span class="ico" ms>ac_unit</span>Secret Santa</a>
+    <a class="slot" href="marketplace.html"><span class="ico" ms>shopping_bag</span>Market</a>
+    <a class="slot" href="gifting.html#surprise"><span class="ico" ms>auto_awesome</span>Surprise</a>
+    <a class="slot" href="me.html"><span class="ico" ms>person</span>Me</a>
   </div>
 
   <div class="banner">Banner space reserved — events, drops and partner gifts will live here</div>
 
   <div class="grid">
-    <a class="tile" href="wishlist.html"><span class="ico" style="background:#F1EDFF">🎁</span><h3>Wishlist</h3><p>Lists people can actually shop from, without buying the same thing twice.</p></a>
-    <a class="tile" href="marketplace.html"><span class="ico" style="background:#FFF3C9">🛍️</span><h3>Marketplace</h3><p>Curated gift picks from verified sellers.</p></a>
-    <a class="tile" href="santa.html"><span class="ico" style="background:#E8F3FF">🎅</span><h3>Secret Santa</h3><p>Draw names in secret. Everyone gets a match, nobody knows who.</p></a>
-    <a class="tile" href="gifting.html"><span class="ico" style="background:#FFEDE4">✨</span><h3>Gifting Shebang</h3><p>Together pools, surprise gifts and the whole gifting life.</p></a>
+    <a class="tile" href="wishlist.html"><span class="ico" ms style="background:#F1EDFF">redeem</span><h3>Wishlist</h3><p>Lists people can actually shop from, without buying the same thing twice.</p></a>
+    <a class="tile" href="marketplace.html"><span class="ico" ms style="background:#FFF3C9">shopping_bag</span><h3>Marketplace</h3><p>Curated gift picks from verified sellers.</p></a>
+    <a class="tile" href="santa.html"><span class="ico" ms style="background:#E8F3FF">ac_unit</span><h3>Secret Santa</h3><p>Draw names in secret. Everyone gets a match, nobody knows who.</p></a>
+    <a class="tile" href="gifting.html"><span class="ico" ms style="background:#FFEDE4">auto_awesome</span><h3>Gifting Shebang</h3><p>Together pools, surprise gifts and the whole gifting life.</p></a>
   </div>
 </div>
 
 <nav class="tabs">
-  <a href="/" class="on"><span class="ico">🏠</span>Home</a>
-  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
-  <a href="marketplace.html"><span class="ico">🛍️</span>Market</a>
-  <a href="santa.html"><span class="ico">🎅</span>Santa</a>
-  <a href="me.html"><span class="ico">👤</span>Me</a>
+  <a href="/" class="on"><span class="ico" ms>home</span>Home</a>
+  <a href="wishlist.html"><span class="ico" ms>redeem</span>Wishlist</a>
+  <a href="marketplace.html"><span class="ico" ms>shopping_bag</span>Market</a>
+  <a href="santa.html"><span class="ico" ms>ac_unit</span>Santa</a>
+  <a href="me.html"><span class="ico" ms>person</span>Me</a>
 </nav>
 
 <div class="modal" id="authModal" style="display:none">
   <div class="sheet">
-    <div class="spread mb"><h2 id="aTitle">Welcome to GIVYA</h2><button class="iconbtn" onclick="closeAuth()">✕</button></div>
+    <div class="spread mb"><h2 id="aTitle">Welcome to GIVYA</h2><button class="iconbtn" onclick="closeAuth()"><span class="ms">close</span></button></div>
     <div class="auth-tabs">
       <button id="tabUp" class="on" onclick="setMode('up')">Sign up</button>
       <button id="tabIn" onclick="setMode('in')">Sign in</button>
@@ -106,7 +106,7 @@ async function gvSubmit(){
   const u=await gvInitHeader();
   const bal=document.getElementById('balance');
   if(u){bal.textContent=GV.pts(GV.profile?(GV.profile.points||0):0);}
-  else{bal.textContent='0';document.getElementById('gvHello').textContent='Welcome to GIVYA 👋';}
+  else{bal.textContent='0';document.getElementById('gvHello').textContent='Welcome to GIVYA <span class="ms">waving_hand</span>';}
   if(next==='1'&&!u)openAuth('up');
   document.getElementById('gvAvatar').onclick=()=>{if(u)location.href='me.html';else openAuth('up');};
   document.getElementById('gvPts').onclick=()=>{if(!u)openAuth('up');};

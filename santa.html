@@ -4,30 +4,30 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Secret Santa — GIVYA</title>
 <meta name="theme-color" content="#7A3FF5">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="app">
-  <div class="pagehead" id="ph"><a class="back" href="/">←</a><h1 id="h1">Secret Santa</h1></div>
+  <div class="pagehead" id="ph"><a class="back" href="/"><span class="ms">arrow_back</span></a><h1 id="h1">Secret Santa</h1></div>
   <div id="body"><div class="empty">Loading…</div></div>
 </div>
 <nav class="tabs">
-  <a href="/"><span class="ico">🏠</span>Home</a>
-  <a href="wishlist.html"><span class="ico">🎁</span>Wishlist</a>
-  <a href="marketplace.html"><span class="ico">🛍️</span>Market</a>
-  <a href="santa.html" class="on"><span class="ico">🎅</span>Santa</a>
-  <a href="me.html"><span class="ico">👤</span>Me</a>
+  <a href="/"><span class="ico" ms>home</span>Home</a>
+  <a href="wishlist.html"><span class="ico" ms>redeem</span>Wishlist</a>
+  <a href="marketplace.html"><span class="ico" ms>shopping_bag</span>Market</a>
+  <a href="santa.html" class="on"><span class="ico" ms>ac_unit</span>Santa</a>
+  <a href="me.html"><span class="ico" ms>person</span>Me</a>
 </nav>
 <div class="modal" id="gSheet" style="display:none"><div class="sheet">
-  <div class="spread mb"><h2>New Secret Santa group</h2><button class="iconbtn" onclick="closeSheet()">✕</button></div>
+  <div class="spread mb"><h2>New Secret Santa group</h2><button class="iconbtn" onclick="closeSheet()"><span class="ms">close</span></button></div>
   <label>Group name</label><input id="gName" placeholder="e.g. Office Christmas 2026">
   <button class="btn mt" onclick="createGroup()">Create group</button>
   <p class="small mt">Add your people, tap Draw, and everyone gets a secret match.</p>
 </div></div>
 <div class="modal" id="mSheet" style="display:none"><div class="sheet">
-  <div class="spread mb"><h2>Add a participant</h2><button class="iconbtn" onclick="closeSheet()">✕</button></div>
+  <div class="spread mb"><h2>Add a participant</h2><button class="iconbtn" onclick="closeSheet()"><span class="ms">close</span></button></div>
   <label>Name</label><input id="mName" placeholder="e.g. Tolu">
   <button class="btn mt" onclick="addMember()">Add</button>
 </div></div>
@@ -45,10 +45,10 @@ async function boot(){
   const {data:groups}=await sb.from('givya_santa_groups').select('*').eq('owner_id',GV.user.id).order('created_at',{ascending:false});
   const box=document.getElementById('body');
   if(!groups||!groups.length){box.innerHTML='<div class="empty">Santa season loading… 🎅<br><button class="btn slim mt" onclick="openSheet()">Start a group</button><br><span class="small" style="display:inline-block;margin-top:8px">Perfect for offices, friends and family.</span></div>';return;}
-  box.innerHTML=groups.map(g=>'<a class="card" style="display:block;margin-bottom:12px" href="santa.html?g='+g.id+'"><div class="spread"><div><b style="font-size:15px">'+esc(g.name)+'</b></div><span class="badge">Open →</span></div></a>').join('');
+  box.innerHTML=groups.map(g=>'<a class="card" style="display:block;margin-bottom:12px" href="santa.html?g='+g.id+'"><div class="spread"><div><b style="font-size:15px">'+esc(g.name)+'</b></div><span class="badge">Open <span class="ms" style="font-size:11px">arrow_forward</span></span></div></a>').join('');
 }
 async function memberView(gid,pid){
-  document.getElementById('ph').innerHTML='<a class="back" href="/">←</a><h1 style="font-size:18px">Your Santa match</h1>';
+  document.getElementById('ph').innerHTML='<a class="back" href="/"><span class="ms">arrow_back</span></a><h1 style="font-size:18px">Your Santa match</h1>';
   const {data:m}=await sb.from('givya_santa_members').select('*').eq('id',pid).eq('group_id',gid).maybeSingle();
   const box=document.getElementById('body');
   if(!m){box.innerHTML='<div class="empty">This link is not valid. Ask the organizer for a fresh one.</div>';return;}
@@ -59,7 +59,7 @@ async function groupView(gid,checkOwner=true){
   if(!g){document.getElementById('body').innerHTML='<div class="empty">Group not found.</div>';return;}
   GROUP=g;
   if(checkOwner){await GV.init();IS_OWNER=!!(GV.user&&GV.user.id===g.owner_id);}
-  document.getElementById('ph').innerHTML=(IS_OWNER?'<a class="back" href="santa.html">←</a>':'<a class="back" href="/">←</a>')+'<h1 style="font-size:18px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(g.name)+'</h1>';
+  document.getElementById('ph').innerHTML=(IS_OWNER?'<a class="back" href="santa.html"><span class="ms">arrow_back</span></a>':'<a class="back" href="/"><span class="ms">arrow_back</span></a>')+'<h1 style="font-size:18px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(g.name)+'</h1>';
   const {data:ms}=await sb.from('givya_santa_members').select('*').eq('group_id',gid).order('created_at');
   MEMBERS=ms||[];
   const box=document.getElementById('body');
@@ -68,7 +68,7 @@ async function groupView(gid,checkOwner=true){
   if(!MEMBERS.length)html+='<div class="empty">No participants yet.<br><button class="btn slim mt" onclick="openMSheet()">Add your people</button></div>';
   else html+=MEMBERS.map(m=>{
     const link=GV.shareLink('santa.html','g='+gid+'&p='+m.id);
-    return '<div class="item"><div class="thumb">🧑🏾</div><div class="info"><b>'+esc(m.name)+'</b><small>'+(m.assigned_to?'gifting '+esc(m.assigned_to):'not drawn yet')+'</small></div><button class="iconbtn" onclick="copyLink(\''+link+'\')">🔗</button></div>';
+    return '<div class="item"><div class="thumb">🧑🏾</div><div class="info"><b>'+esc(m.name)+'</b><small>'+(m.assigned_to?'gifting '+esc(m.assigned_to):'not drawn yet')+'</small></div><button class="iconbtn" onclick="copyLink(\''+link+'\')"><span class="ms">link</span></button></div>';
   }).join('');
   html+='<div class="row mt"><button class="btn" onclick="draw()">Draw names</button><button class="btn ghost" onclick="openMSheet()">Add person</button></div>';
   if(MEMBERS.length&&MEMBERS.some(m=>m.assigned_to))html+='<p class="small" style="text-align:center;margin-top:10px">Share each person their link above. Drawing again reshuffles everyone.</p>';
