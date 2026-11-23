@@ -106,7 +106,7 @@ async function gvSubmit(){
   const u=await gvInitHeader();
   const bal=document.getElementById('balance');
   if(u){bal.textContent=GV.pts(GV.profile?(GV.profile.points||0):0);}
-  else{bal.textContent='0';document.getElementById('gvHello').textContent='Welcome to GIVYA <span class="ms">waving_hand</span>';}
+  else{bal.textContent='0';document.getElementById('gvHello').innerHTML='Welcome to GIVYA <span class="ms">waving_hand</span>';}
   if(next==='1'&&!u)openAuth('up');
   document.getElementById('gvAvatar').onclick=()=>{if(u)location.href='me.html';else openAuth('up');};
   document.getElementById('gvPts').onclick=()=>{if(!u)openAuth('up');};
