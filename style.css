@@ -112,3 +112,13 @@ h1{font-size:22px;letter-spacing:-.3px}
 .ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24;vertical-align:middle;user-select:none;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
 
 .sheet .btn.mt{position:sticky;bottom:0;background:#fff;padding-top:12px;margin-top:14px}
+
+/* Together pool */
+.poolcard{background:linear-gradient(135deg,#F4EFFF,#FFF)}
+.poolbar{height:10px;border-radius:999px;background:#E9E2FA;overflow:hidden;margin:10px 0 8px}
+.poolfill{height:100%;border-radius:999px;background:linear-gradient(90deg,#834DFB,#6A2FE8)}
+.pledge{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid #EFEAF9;font-size:13px}
+.pledge .who{flex:1;min-width:0}
+.pledge .who small{display:block;color:#6B6580}
+.badge.paid{background:#EAF7EE;color:#1D7A3E}
+.badge.hold{background:#FFF4E0;color:#9A6A00}

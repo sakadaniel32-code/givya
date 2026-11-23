@@ -38,6 +38,16 @@
   <button class="btn mt" onclick="addItem()">Add to wishlist <span class="badge" style="background:rgba(255,255,255,.2);color:#fff">+10 pts</span></button>
 </div></div>
 
+<div class="modal" id="poolSheet" style="display:none"><div class="sheet">
+  <div class="spread mb"><h2>Start a Together pool</h2><button class="iconbtn" onclick="closeSheet('poolSheet')"><span class="ms">close</span></button></div>
+  <p class="sub mb">One goal, many hands. Friends chip in from your share link towards this gift.</p>
+  <label>Goal (₦)</label><input id="pGoal" inputmode="decimal" placeholder="e.g. 150000">
+  <label>Close date</label><input id="pDate" type="date">
+  <label>Who is it for? (optional)</label><input id="pWho" placeholder="e.g. Daniel">
+  <button class="btn mt" onclick="createPool()">Create pool</button>
+  <p class="small mt" style="text-align:center">Online payment is not switched on yet. Guests pledge from your link and you confirm each one.</p>
+</div></div>
+
 <script src="app.js"></script>
 <script>
 const params=new URLSearchParams(location.search);
@@ -70,7 +80,37 @@ async function detail(id){
   document.getElementById('shareBtn').onclick=()=>gvShare(GV.shareLink('wishlist-view.html','w='+w.share_token));
   await loadItems();
 }
+let POOL=null,PLEDGES=[];
+async function loadPool(){
+  const {data:ps}=await sb.from('givya_pools').select('*').eq('wishlist_id',W.id).order('created_at',{ascending:false}).limit(1);
+  POOL=ps&&ps[0]||null;PLEDGES=[];
+  if(POOL){const {data:pg}=await sb.from('givya_pledges').select('*').eq('pool_id',POOL.id).order('created_at',{ascending:false});PLEDGES=pg||[];}
+}
+function fmtDate(d){if(!d)return '';try{return new Date(d+'T00:00:00').toLocaleDateString('en-NG',{day:'numeric',month:'short'});}catch(e){return d;}}
+function togetherHTML(){
+  if(!POOL)return '<div class="card mb"><div class="spread"><div><b style="font-size:15px">Together</b><div class="small">Pool money from everyone towards one gift</div></div></div><button class="btn slim" style="margin-top:8px" onclick="openSheet(\'poolSheet\')">Start a pool</button></div>';
+  const paid=PLEDGES.filter(x=>x.marked_paid).reduce((s,x)=>s+Number(x.amount||0),0);
+  const all=PLEDGES.reduce((s,x)=>s+Number(x.amount||0),0);
+  const target=Number(POOL.goal_amount||0);
+  const pct=target?Math.min(100,Math.round(paid/target*100)):0;
+  const rows=PLEDGES.map(x=>'<div class="pledge"><div class="who"><b>'+esc(x.giver_name||'A well-wisher')+'</b>'+(x.message?'<small>'+esc(x.message)+'</small>':'')+'</div><b>'+GV.naira(x.amount)+'</b><span class="badge '+(x.marked_paid?'paid':'hold')+'">'+(x.marked_paid?'confirmed':'pledged')+'</span><button class="btn slim ghost" onclick="markPaid(\''+x.id+'\','+(!x.marked_paid)+')">'+(x.marked_paid?'Undo':'Confirm')+'</button></div>').join('');
+  return '<div class="card poolcard mb"><div class="spread"><div><b style="font-size:15px">Together</b><div class="small">closes '+(fmtDate(POOL.deadline)||'no date yet')+'</div></div><span class="badge">'+pct+'% funded</span></div>'
+    +'<div class="poolbar"><div class="poolfill" style="width:'+pct+'%"></div></div>'
+    +'<div class="spread small"><span>'+GV.naira(paid)+' confirmed of '+GV.naira(target)+(all>paid?' · '+GV.naira(all-paid)+' pledged':'')+'</span><span>'+PLEDGES.length+' chipping in</span></div>'
+    +(rows?'<div style="margin-top:6px">'+rows+'</div>':'')+'</div>';
+}
+async function createPool(){
+  if(!W)return;
+  const g=document.getElementById('pGoal').value.replace(/[^0-9.]/g,'');
+  if(!g||Number(g)<=0)return GV.toast('Set the goal amount first');
+  const {error}=await sb.from('givya_pools').insert({owner_id:GV.user.id,title:W.title,wishlist_id:W.id,goal_amount:Number(g),deadline:document.getElementById('pDate').value||null,receiver_name:document.getElementById('pWho').value.trim()||null});
+  if(error){console.error('pool failed',error);return GV.toast('Could not start: '+(error.message||'try again'));}
+  ['pGoal','pDate','pWho'].forEach(id=>document.getElementById(id).value='');
+  closeSheet('poolSheet');GV.toast('Pool started 🎉');loadItems();
+}
+async function markPaid(id,val){await sb.from('givya_pledges').update({marked_paid:!!val}).eq('id',id);loadItems();}
 async function loadItems(){
+  await loadPool();
   const {data:items}=await sb.from('givya_wishlist_items').select('*').eq('wishlist_id',W.id).order('created_at',{ascending:false});
   ITEMS=items||[];
   CLAIMS={};
@@ -79,7 +119,7 @@ async function loadItems(){
     (cl||[]).forEach(c=>{if(!CLAIMS[c.item_id])CLAIMS[c.item_id]=c;});
   }
   const box=document.getElementById('body');
-  let html='<div class="small mb">'+esc(W.occasion||'Your gift list')+' · share link gives friends a clean view to reserve from</div>';
+  let html='<div class="small mb">'+esc(W.occasion||'Your gift list')+' · share link gives friends a clean view to reserve from</div>'+togetherHTML();
   if(!ITEMS.length)html+='<div class="empty">Nothing on this list yet.<br><button class="btn slim mt" onclick="openSheet(\'itemSheet\')">Add a gift idea</button></div>';
   else html+=ITEMS.map(i=>{
     const c=CLAIMS[i.id];

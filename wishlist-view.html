@@ -10,21 +10,30 @@
 </head>
 <body>
 <div class="app">
-  <div class="pagehead"><a class="back" href="/"><span class="ms">arrow_back</span></a><h1 style="font-size:18px">Gift list</h1></div>
+  <div class="pagehead"><a class="back" href="/"><span class="ms">arrow_back</span></a><h1 style="font-size:18px" id="h1">Gift list</h1></div>
   <div id="body"><div class="empty">Opening the list…</div></div>
 </div>
 <div class="modal" id="claimSheet" style="display:none"><div class="sheet">
-  <div class="spread mb"><h2>Reserve this gift</h2><button class="iconbtn" onclick="closeSheet()"><span class="ms">close</span></button></div>
+  <div class="spread mb"><h2>Reserve this gift</h2><button class="iconbtn" onclick="closeSheet('claimSheet')"><span class="ms">close</span></button></div>
   <p class="sub mb" id="claimWhat"></p>
   <label>Your name</label><input id="cName" placeholder="So they know who to thank">
   <label>Note (optional)</label><input id="cMsg" placeholder="e.g. It is a surprise, do not tell them 😄">
   <button class="btn mt" onclick="claim()">I'll get this <span class="badge" style="background:rgba(255,255,255,.2);color:#fff">+50 pts</span></button>
   <p class="small mt" style="text-align:center">The person only sees that it is reserved, not what you planned to spend.</p>
 </div></div>
+<div class="modal" id="chipSheet" style="display:none"><div class="sheet">
+  <div class="spread mb"><h2>Chip in</h2><button class="iconbtn" onclick="closeSheet('chipSheet')"><span class="ms">close</span></button></div>
+  <p class="sub mb" id="chipFor"></p>
+  <label>Your name</label><input id="pName" placeholder="So they know who to thank">
+  <label>Amount (₦)</label><input id="pAmt" inputmode="decimal" placeholder="e.g. 5000">
+  <label>Note (optional)</label><input id="pNote" placeholder="e.g. Happy birthday! 🎉">
+  <button class="btn mt" onclick="pledge()">Chip in</button>
+  <p class="small mt" style="text-align:center">Online payment is not switched on yet. Your pledge is saved, and the organiser confirms it with you.</p>
+</div></div>
 <script src="app.js"></script>
 <script>
 const token=new URLSearchParams(location.search).get('w');
-let TARGET=null,ME=null,ITMS=[];
+let TARGET=null,ME=null,ITMS=[],POOL=null,PLEDGES=[];
 async function boot(){
   const u=await GV.init();
   if(u){await GV.loadProfile();ME={id:GV.user.id,name:(GV.profile&&GV.profile.display_name)||''};}
@@ -33,12 +42,16 @@ async function boot(){
   if(!w){box.innerHTML='<div class="empty">This link does not point to a list. Ask for a fresh share link.</div>';return;}
   TARGET=w;
   const owner=(w.givya_profiles&&w.givya_profiles.display_name)||'someone';
-  document.querySelector('h1').textContent=(owner.split(' ')[0]||owner)+"'s list";
+  document.getElementById('h1').textContent=(owner.split(' ')[0]||owner)+"'s list";
   const {data:items}=await sb.from('givya_wishlist_items').select('*').eq('wishlist_id',w.id).order('created_at',{ascending:false});
   ITMS=items||[];
   const CLAIMS={};
   if(ITMS.length){const {data:cl}=await sb.from('givya_claims').select('*').in('item_id',items.map(i=>i.id)).order('created_at',{ascending:false});(cl||[]).forEach(c=>{if(!CLAIMS[c.item_id])CLAIMS[c.item_id]=c;});}
+  const {data:ps}=await sb.from('givya_pools').select('*').eq('wishlist_id',w.id).order('created_at',{ascending:false}).limit(1);
+  POOL=ps&&ps[0]||null;PLEDGES=[];
+  if(POOL){const {data:pg}=await sb.from('givya_pledges').select('*').eq('pool_id',POOL.id).order('created_at',{ascending:false});PLEDGES=pg||[];}
   let html='<div class="small mb">'+esc(w.occasion||'A GIVYA wishlist')+' · tap a gift to reserve it, so nobody buys the same thing twice</div>';
+  if(POOL)html+=poolHTML();
   if(!items||!items.length)html+='<div class="empty">This list is empty for now.</div>';
   else html+=items.map(i=>{
     const c=CLAIMS[i.id];
@@ -48,11 +61,42 @@ async function boot(){
   }).join('');
   box.innerHTML=html;
 }
+function fmtDate(d){if(!d)return '';try{return new Date(d+'T00:00:00').toLocaleDateString('en-NG',{day:'numeric',month:'short'});}catch(e){return d;}}
+function poolHTML(){
+  const paid=PLEDGES.filter(x=>x.marked_paid).reduce((s,x)=>s+Number(x.amount||0),0);
+  const all=PLEDGES.reduce((s,x)=>s+Number(x.amount||0),0);
+  const target=Number(POOL.goal_amount||0);
+  const pct=target?Math.min(100,Math.round(paid/target*100)):0;
+  const who=POOL.receiver_name?('for '+esc(POOL.receiver_name)+' · '):'';
+  const rows=PLEDGES.map(x=>'<div class="pledge"><div class="who"><b>'+esc(x.giver_name||'A well-wisher')+'</b>'+(x.message?'<small>'+esc(x.message)+'</small>':'')+'</div><b>'+GV.naira(x.amount)+'</b><span class="badge '+(x.marked_paid?'paid':'hold')+'">'+(x.marked_paid?'confirmed':'pledged')+'</span></div>').join('');
+  return '<div class="card poolcard mb"><div class="spread"><div><b style="font-size:15px">Together</b><div class="small">'+who+'closes '+(fmtDate(POOL.deadline)||'no date yet')+'</div></div><span class="badge">'+pct+'% funded</span></div>'
+    +'<div class="poolbar"><div class="poolfill" style="width:'+pct+'%"></div></div>'
+    +'<div class="spread small"><span>'+GV.naira(paid)+' confirmed of '+GV.naira(target)+(all>paid?(' · '+GV.naira(all-paid)+' pledged'):'')+'</span><span>'+PLEDGES.length+' chipping in</span></div>'
+    +'<button class="btn" style="margin-top:10px" onclick="openChip()">Chip in</button>'
+    +(rows?'<div style="margin-top:6px">'+rows+'</div>':'')+'</div>';
+}
+function openChip(){
+  if(!POOL)return;
+  document.getElementById('chipFor').textContent='Chipping in with others for: '+TARGET.title;
+  if(ME&&!document.getElementById('pName').value)document.getElementById('pName').value=ME.name;
+  openSheet('chipSheet');
+}
+async function pledge(){
+  if(!POOL)return;
+  const name=document.getElementById('pName').value.trim();
+  const amt=document.getElementById('pAmt').value.replace(/[^0-9.]/g,'');
+  if(!name)return GV.toast('Add your name first');
+  if(!amt||Number(amt)<=0)return GV.toast('How much are you chipping in?');
+  const {error}=await sb.from('givya_pledges').insert({pool_id:POOL.id,giver_name:name,amount:Number(amt),message:document.getElementById('pNote').value.trim()||null});
+  if(error){console.error('pledge failed',error);return GV.toast('Could not save: '+(error.message||'try again'));}
+  ['pName','pAmt','pNote'].forEach(id=>document.getElementById(id).value='');
+  closeSheet('chipSheet');GV.toast('Pledge saved 🎉');boot();
+}
 function openClaim(id){
   document.getElementById('claimWhat').textContent='You are reserving: '+ITEM_NAME(id);
   if(ME&&!document.getElementById('cName').value)document.getElementById('cName').value=ME.name;
   document.getElementById('claimSheet').dataset.item=id;
-  document.getElementById('claimSheet').style.display='flex';
+  openSheet('claimSheet');
 }
 function ITEM_NAME(id){const it=ITMS.find(x=>x.id===id);return it?it.title:'this gift';}
 async function claim(){
@@ -60,11 +104,13 @@ async function claim(){
   const name=document.getElementById('cName').value.trim();
   if(!name)return GV.toast('Add your name first');
   const {error}=await sb.from('givya_claims').insert({item_id:id,claimer_id:ME?ME.id:null,claimer_name:name,message:document.getElementById('cMsg').value.trim()||null});
-  if(error)return GV.toast('Could not reserve, try again');
-  closeSheet();GV.toast(ME?'Reserved · +50 points':'Reserved! Thank you 🎁');boot();
+  if(error){console.error('claim failed',error);return GV.toast('Could not reserve: '+(error.message||'try again'));}
+  closeSheet('claimSheet');GV.toast(ME?'Reserved · +50 points':'Reserved! Thank you 🎁');boot();
 }
 function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function closeSheet(){document.getElementById('claimSheet').style.display='none';}
+function openSheet(id){document.getElementById(id).style.display='flex';}
+function closeSheet(id){document.getElementById(id).style.display='none';}
 boot();
 </script>
-</body></html>
+</body>
+</html>
