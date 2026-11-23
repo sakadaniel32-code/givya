@@ -1,5 +1,5 @@
 /* Self-hosted fonts (no dependency on Google servers) */
-@font-face{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;font-display:block;src:url(fonts/material-symbols.woff2) format('woff2')}
+@font-face{font-family:'Material Symbols Rounded';font-style:normal;font-weight:normal;font-display:block;src:url(fonts/material-symbols-full.woff2) format('woff2')}
 @font-face {
   font-family: 'Plus Jakarta Sans';
   font-style: normal;
